@@ -1,0 +1,8 @@
+datasets/**
+bin/**
+obj/**
+lsh_out.txt
+cube_out.txt
+cluster_out_classic.txt
+cluster_out_lsh.txt
+cluster_out_cube.txt
