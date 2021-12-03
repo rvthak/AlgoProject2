@@ -33,6 +33,24 @@ double Vector::l2(Vector *p){
 	return sqrt(sum);
 }
 
+double Vector::discrete_frechet_distance(Vector *p)
+{
+	Vector* q = this;
+
+	unsigned length_p = (p->vec.size()) - 1;
+	unsigned length_q = (q->vec.size()) - 1;
+
+	double distances[length_p][length_q];
+
+	for (unsigned i = 0; i < length_p; i++)
+	{
+		for (unsigned j = 0; j < length_q; j++)
+		{
+			distances[i][j] = -1;
+		}
+	} 
+}
+
 //------------------------------------------------------------------------------------------------------------------
 
 VectorArray::VectorArray(unsigned size){
