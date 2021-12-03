@@ -72,8 +72,27 @@ double Vector::dfd_calculation(double[][] c, unsigned i, unsigned j, Vector* p, 
 
 		C[1][j] = max(this->dfd_calculation(c, 1, (j - 1), p, q), abs(p1 - qj));
 	}
-		
+	else if (i > 1 && j == 1)
+	{
+		unsigned pi = p->vec[i];
+		unsigned q1 = p->vec[1];
 
+		c[i][1] = max(this->dfd_calculation(c, (i - 1), 1, p, q), abs(pi - q1));
+	}
+	else if (i > 1 && j > 1)
+	{
+		unsigned pi = p->vec[i];
+		unsigned qj = p->vec[j];
+
+		double c1 = this->dfd_calculation(c, (i - 1), j, p, q);
+		double c2 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
+		double c3 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
+		double min_c = min(c1, c2, c3);
+
+		c[i][j] = max(min_c, abs(pi - qj));
+	}
+		
+	return c[i][j]
 }
 
 //------------------------------------------------------------------------------------------------------------------
