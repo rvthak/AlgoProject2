@@ -40,15 +40,40 @@ double Vector::discrete_frechet_distance(Vector *p)
 	unsigned length_p = (p->vec.size()) - 1;
 	unsigned length_q = (q->vec.size()) - 1;
 
-	double distances[length_p][length_q];
+	double c[length_p][length_q];
 
 	for (unsigned i = 0; i < length_p; i++)
 	{
 		for (unsigned j = 0; j < length_q; j++)
 		{
-			distances[i][j] = -1;
+			c[i][j] = -1;
 		}
-	} 
+	}
+
+	unsigned p1 = p->vec[1];
+	unsigned q1 = q->vec[1];
+
+	c[1][1] =  abs(p1 - q1);
+
+	double distance = this->dfd_calculation(c, length_p, length_q, p, q);
+
+	return distance;
+}
+
+double Vector::dfd_calculation(double[][] c, unsigned i, unsigned j, Vector* p, Vector* q)
+{
+	if (c[i][j] > -1)
+		return c[i][j];
+
+	if (i == 1 && j > 1)
+	{
+		unsigned p1 = p->vec[1];
+		unsigned qj = q->vec[j];
+
+		C[1][j] = max(this->dfd_calculation(c, 1, (j - 1), p, q), abs(p1 - qj));
+	}
+		
+
 }
 
 //------------------------------------------------------------------------------------------------------------------
