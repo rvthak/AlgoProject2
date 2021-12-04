@@ -87,12 +87,49 @@ double Vector::dfd_calculation(double[][] c, unsigned i, unsigned j, Vector* p, 
 		double c1 = this->dfd_calculation(c, (i - 1), j, p, q);
 		double c2 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
 		double c3 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
+		
 		double min_c = min(c1, c2, c3);
 
 		c[i][j] = max(min_c, abs(pi - qj));
 	}
 		
 	return c[i][j]
+}
+
+Vector* Vector::filter_vector(unsigned e)
+{
+	Vector* filtered_vector = new Vector();
+	filtered_vector->id = this->id;
+
+	unsigned current_vector_length = this->vec.size();
+
+	for (unsigned i = 0; i < current_vector_length; i++)
+	{
+		unsigned index_a = i;
+		unsigned index_b = i + 1;
+		unsigned index_c = i + 2;
+
+		if (index_a > current_vector_length && index_b > current_vector_length && index_c > current_vector_length)
+			return filtered_vector;
+
+		int a = this->vec[index_a];
+		int b = this->vec[index_b];
+		int c = this->vec[index_c];
+
+		if (abs(a - b) <= e && abs(b - c) <= e)
+		{
+			filtered_vector->vec.push_back(a);
+			filtered_vector->vec.push_back(c);
+		}
+		else
+		{
+			filtered_vector->vec.push_back(a);
+			filtered_vector->vec.push_back(b);
+			filtered_vector->vec.push_back(c);
+		}
+	}
+
+	return filtered_vector;
 }
 
 //------------------------------------------------------------------------------------------------------------------
