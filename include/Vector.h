@@ -9,12 +9,13 @@
 // Vector Representation Struct
 struct Vector{
 	unsigned id;			// The Vector's Id
-	std::vector<int> vec;	// The Vector Itself
+	std::vector<double> vec;	// The Vector Itself
 	void *centroid;			// A pointer to the assigned Centroid when clustering (if any)
 
 	Vector();
 
-	void print();			// Print the Vector Contents
+	void print();					// Print the Vector Contents
+	void print(std::string name);	// Print the Vector Contents + Its name
 	double l2(Vector *p);	// Returns the l2 norm between the two vectors
 };
 
@@ -22,21 +23,18 @@ struct Vector{
 struct VectorArray{
 	unsigned size;	// The size of the Array == The amount of Vectors
 	Vector *array;	// The Vector Storage Array itself
+	std::string *id_names; // An array storing the names of each stock based on its id
 
-	// CHRIS 12.11.21
 	VectorArray(unsigned size);
-
 	VectorArray(std::string filename);
 	~VectorArray();
 
 	void *kNN_naive(Vector *query, unsigned k);
 	void print();	// Print all the Vectors of the Array
 
-	// CHRIS 12.11.21
-	int add_vector(unsigned index, int id, std::vector<int> data);
+	int add_vector(unsigned index, int id, std::string name, std::vector<double> data);
 
 private:
-	// int add_vector(unsigned index, int id, std::vector<int> data);
 	void parse_input(std::string filename);
 };
 
@@ -80,6 +78,7 @@ private:
 struct AssignmentArray{
 	unsigned size;			// The size of the Array == The amount of Vectors
 	Vector   *array;		// The Vector Storage Array itself
+	std::string *id_names;	// An array storing the names of each stock based on its id
 
 	std::map<unsigned, Centroid *> centroid;	// Foreach Vector id -> Assigned Centroid
 	std::map<unsigned, double> dist;			// Foreach Vector id -> Distance to Assigned Centroid
@@ -92,11 +91,9 @@ struct AssignmentArray{
 	void assign(unsigned id, Centroid *centroid, double dist);
 	void print();	// Print all the Vector-Centroid-distance pairs
 
-	// CHRIS 12.11.21
-	int add_vector(unsigned index, int id, std::vector<int> data);
+	int add_vector(unsigned index, int id, std::string name, std::vector<double> data);
 
 private:
-	// int add_vector(unsigned index, int id, std::vector<int> data);
 	void parse_input(std::string filename);
 };
 

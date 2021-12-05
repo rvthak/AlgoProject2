@@ -16,14 +16,22 @@ Vector::Vector(){ this->id = 0; this->centroid = nullptr; }
 // Prints all the data stored in a Vector
 void Vector::print(){
 	cout << " Id: " << this->id << endl << "   > ";
-	for (int val: this->vec){
+	for (double val: this->vec){
+		cout << val << ' ';
+	} cout << endl;
+}
+
+// Print the Vector Contents + Its name
+void Vector::print(std::string name){
+	cout << " Id: " << this->id << ", Name: " << name << endl << "   > ";
+	for (double val: this->vec){
 		cout << val << ' ';
 	} cout << endl;
 }
 
 // Calculate the norm between "this" and p
 double Vector::l2(Vector *p){
-	int tmp;
+	double tmp;
 	double sum=0;
 
 	for(long unsigned i=0; i<(p->vec).size(); i++){
@@ -42,6 +50,13 @@ VectorArray::VectorArray(unsigned size){
 	this->array = new Vector[this->size];
 	if( this->array == nullptr ){
 		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for file records." << endl;
+		exit(1);
+	}
+
+	// Allocate memory to store the Vector names
+	this->id_names = new string[this->size];
+	if( this->id_names == nullptr ){
+		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
 		exit(1);
 	}
 }
@@ -63,21 +78,29 @@ VectorArray::VectorArray(string filename){
 		exit(1);
 	}
 
+	// Allocate memory to store the Vector names
+	this->id_names = new string[this->size];
+	if( this->id_names == nullptr ){
+		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
+		exit(1);
+	}
+
 	// Parse the file and store the records
 	this->parse_input(filename);
 	//cout << " (i) Created VectorArray containing " << this->size << " vectors." << endl;
 }
 
 // Free a VectorArray
-VectorArray::~VectorArray(){ delete [] this->array; }
+VectorArray::~VectorArray(){ delete [] this->array; delete [] this->id_names;}
 
 // Add a vector in the given "index" of a VectorArray
-int VectorArray::add_vector(unsigned index, int id, vector<int> data){
+int VectorArray::add_vector(unsigned index, int id, string name, vector<double> data){
 	
 	if( this->size < index ){ return 1; }
 
 	this->array[index].id = id;
 	this->array[index].vec = data;
+	this->id_names[index] = name;
 
 	return 0;
 }
@@ -85,7 +108,7 @@ int VectorArray::add_vector(unsigned index, int id, vector<int> data){
 // Prints all the Vectors Stored in a VectorArray
 void VectorArray::print(){
 	for(unsigned i=0; i<(this->size); i++){
-		(this->array)[i].print();
+		(this->array)[i].print((this->id_names)[i]);
 		cout << endl;
 	}
 }
@@ -95,14 +118,15 @@ void VectorArray::parse_input(string filename){
 
 	// Amount of Integers per Vector (Does not count the Vector id)
 	unsigned vec_length = getFileLineLength(filename)-1;
+	//cout << " Vector Length: " << vec_length << endl;
 
 	// Open the file as an ifstream
 	ifstream file(filename);
-	string line;
+	string line, name;
 
 	unsigned vecs_loaded=0; // Counts the already parsed vectors
-	int val, id=-1;
-	vector<int> tmp_vec;
+	double val;
+	vector<double> tmp_vec;
 
 	// For each Vector in the file (== for each line):
 	while( getline(file, line) ){
@@ -110,24 +134,29 @@ void VectorArray::parse_input(string filename){
 		// Convert the line into a stream for easier parsing
 		istringstream line_stream(line);
 
-		// For each integer in the Vector Line:
+		// Get the Vector id name
+		if( !(line_stream >> name) ){
+			cout << "\033[31;1m (!) Fatal Error:\033[0m Input Parsing : " << filename << " : line no " << vecs_loaded << " : Failed to parse Id name." << endl;
+			exit(1);
+		}
+
+		// Create a Vector containing all the existing numbers
 		while( line_stream >> val ){
-			// Store the first integer as the Vector Id
-			if( (id==-1) && (tmp_vec.size()==0) ){ id=val; }
-			else{ tmp_vec.push_back(val); }
+			tmp_vec.push_back(val); 
 		}
 
 		// If you get an illegal Vector, terminate
 		if( tmp_vec.size() != vec_length ){
-			cout << "\033[31;1m (!) Fatal Error:\033[0m Input Parsing : " << filename << " : line no " << vecs_loaded << " : Illegal Vector." << endl;
+			cout << " Read Vector Length: " << tmp_vec.size() << endl;
+			cout << "\033[31;1m (!) Fatal Error:\033[0m Input Parsing : " << filename << " : line no " << vecs_loaded << " : Unsupported Vector Length." << endl;
 			exit(1);
 		}//cout << " Parsed Vector: Id:" << id << ", Length:" << tmp_vec.size() << endl;
 
 		// Add the new Vector to the VectorArray Storage Array
-		this->add_vector(vecs_loaded, id, tmp_vec);
+		this->add_vector(vecs_loaded, vecs_loaded, name, tmp_vec);
 
 		// Clear the vector contents and reset the id to "Empty", to read the next Vector
-		tmp_vec.clear(); id=-1;
+		tmp_vec.clear();
 
 		// This line's Vector was loaded successfully
 		vecs_loaded++;
@@ -153,14 +182,14 @@ void *VectorArray::kNN_naive(Vector *query, unsigned k){
 
 // Prints all the data stored in a Centroid
 void Centroid::print(){
-	for (int val: this->vec.vec){
+	for (double val: this->vec.vec){
 		cout << val << ' ';
 	} cout << endl;
 }
 
 // Calculate the norm between "this" and p
 double Centroid::l2(Vector *p){
-	int tmp;
+	double tmp;
 	double sum=0;
 
 	for(long unsigned i=0; i<(p->vec).size(); i++){
@@ -334,6 +363,13 @@ AssignmentArray::AssignmentArray(std::string filename){
 		exit(1);
 	}
 
+	// Allocate memory to store the Vector names
+	this->id_names = new string[this->size];
+	if( this->id_names == nullptr ){
+		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
+		exit(1);
+	}
+
 	// Parse the file and store the records
 	this->parse_input(filename);
 
@@ -344,7 +380,7 @@ AssignmentArray::AssignmentArray(std::string filename){
 	}
 }
 
-AssignmentArray::~AssignmentArray(){ delete [] this->array; }
+AssignmentArray::~AssignmentArray(){ delete [] this->array; delete [] this->id_names; }
 
 // Store the Centroid and distance assigned to the Vector with the given id
 void AssignmentArray::assign(unsigned id, Centroid *centroid, double dist){
@@ -355,7 +391,7 @@ void AssignmentArray::assign(unsigned id, Centroid *centroid, double dist){
 // Prints all the Vectors Stored in the AssignmentArray
 void AssignmentArray::print(){
 	for(unsigned i=0; i<(this->size); i++){
-		(this->array)[i].print();
+		(this->array)[i].print( (this->id_names)[i] );
 		cout << " Centroid: " << endl;
 		if( (this->centroid)[i] == nullptr ){ cout << " NULL " << endl; }
 		else{ (this->centroid)[i]->print(); }
@@ -379,10 +415,11 @@ void AssignmentArray::reset_clusters(){
 }
 
 // Add a vector in the given "index" of a AssignmentArray
-int AssignmentArray::add_vector(unsigned index, int id, vector<int> data){
+int AssignmentArray::add_vector(unsigned index, int id, string name, vector<double> data){
 	if( this->size < index ){ return 1; }
 	this->array[index].id = id;
 	this->array[index].vec = data;
+	this->id_names[index] = name;
 	return 0;
 }
 
@@ -394,11 +431,11 @@ void AssignmentArray::parse_input(string filename){
 
 	// Open the file as an ifstream
 	ifstream file(filename);
-	string line;
+	string line, name;
 
 	unsigned vecs_loaded=0; // Counts the already parsed vectors
-	int val, id=-1;
-	vector<int> tmp_vec;
+	double val;
+	vector<double> tmp_vec;
 
 	// For each Vector in the file (== for each line):
 	while( getline(file, line) ){
@@ -406,11 +443,15 @@ void AssignmentArray::parse_input(string filename){
 		// Convert the line into a stream for easier parsing
 		istringstream line_stream(line);
 
-		// For each integer in the Vector Line:
+		// Get the Vector id name
+		if( !(line_stream >> name) ){
+			cout << "\033[31;1m (!) Fatal Error:\033[0m Input Parsing : " << filename << " : line no " << vecs_loaded << " : Failed to parse Id name." << endl;
+			exit(1);
+		}
+
+		// Create a Vector containing all the existing numbers
 		while( line_stream >> val ){
-			// Store the first integer as the Vector Id
-			if( (id==-1) && (tmp_vec.size()==0) ){ id=val; }
-			else{ tmp_vec.push_back(val); }
+			tmp_vec.push_back(val); 
 		}
 
 		// If you get an illegal Vector, terminate
@@ -420,10 +461,10 @@ void AssignmentArray::parse_input(string filename){
 		}//cout << " Parsed Vector: Id:" << id << ", Length:" << tmp_vec.size() << endl;
 
 		// Add the new Vector to the VectorArray Storage Array
-		this->add_vector(vecs_loaded, id, tmp_vec);
+		this->add_vector(vecs_loaded, vecs_loaded, name, tmp_vec);
 
 		// Clear the vector contents and reset the id to "Empty", to read the next Vector
-		tmp_vec.clear(); id=-1;
+		tmp_vec.clear();
 
 		// This line's Vector was loaded successfully
 		vecs_loaded++;
@@ -446,8 +487,8 @@ void AssignmentArray::update_centroids(CentroidArray *cent){
 		// If no Vectors are assigned to this Centroid => don't move it
 		if( (cent->array)[i].assignments.size() == 0 ){ continue; }
 
-		std::vector<int> mean(vec_size, 0);
-		std::vector<int> prev = (cent->array)[i].vec.vec;
+		std::vector<double> mean(vec_size, 0);
+		std::vector<double> prev = (cent->array)[i].vec.vec;
 
 		// Sum all the vectors that belong to this cluster
 		for(unsigned j=0; j<( (cent->array)[i].assignments.size() ); j++){
