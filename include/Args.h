@@ -86,9 +86,11 @@ struct ARGS_Search{
 	std::string metric;	// The metric that will be used for frechet distance
 	double delta;		// Delta value used for grid
 
+	bool notTrue;	// Flag that disables the true nearest neighbour calculation
+
 	// Initialize all args to "Empty" using an initializer list
 	ARGS_Search():input_file(EMPTY_FILE), query_file(EMPTY_FILE), output_file(EMPTY_FILE), algorithm(EMPTY_FILE),
-	              k(EMPTY_INT), L(EMPTY_INT), M(EMPTY_INT), probes(EMPTY_INT), metric(EMPTY_FILE), delta(EMPTY_FLOAT){}
+	              k(EMPTY_INT), L(EMPTY_INT), M(EMPTY_INT), probes(EMPTY_INT), metric(EMPTY_FILE), delta(EMPTY_FLOAT), notTrue(false){}
 
 	void read_terminal(int argc, char *argv[]);
 	void read_args();

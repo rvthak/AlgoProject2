@@ -578,6 +578,9 @@ void ARGS_Search::read_terminal(int argc, char *argv[]){
 			if( ss >> this->delta ){}
 			else{ error_arg("delta"); }
 		}
+		else if(strcmp(argv[i],"-notTrue")==0){
+			this->notTrue = true;
+		}
 		// In case we dont get a known flag/string error
 		else {
 			cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown arg " << argv[i] << endl;
@@ -703,6 +706,8 @@ void ARGS_Search::clear(){
 
 	this->metric = EMPTY_STRING;
 	this->delta = EMPTY_FLOAT;
+
+	this->notTrue = false;
 }
 
 // Print the curent args
@@ -719,5 +724,6 @@ void ARGS_Search::print(){
 	printf( "\033[33;1m| probes: \033[0m%-75d \033[33;1m|\033[0m\n", this->probes);
 	printf( "\033[33;1m| metric: \033[0m%-75s \033[33;1m|\033[0m\n", (this->metric).c_str());
 	printf( "\033[33;1m| delta:  \033[0m%-75.2f \033[33;1m|\033[0m\n", this->delta);
+	printf( "\033[33;1m| notTrue:\033[0m%-75d \033[33;1m|\033[0m\n", (int)(this->notTrue) );
 	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
 }
