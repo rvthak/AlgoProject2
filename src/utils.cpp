@@ -19,10 +19,11 @@ unsigned getFileLines(string name){
 
 // Get the file line width, based on the width of the first line
 unsigned getFileLineLength(string name){
-	ifstream file(name);
 	string firstline;
-	int tmp;
+	string word;
 	unsigned count=0;
+
+	ifstream file(name);
 
 	// Get the first line of the file and return its length
 	getline(file, firstline);
@@ -31,7 +32,7 @@ unsigned getFileLineLength(string name){
 	istringstream line_stream(firstline);
 
 	// loop to count all the elements
-	while( line_stream >> tmp ){
+	while( line_stream >> word ){
 		count++;
 	}
 
@@ -106,7 +107,7 @@ void print_header(void){
 	cout << "\033[33;1m _____________________________________________________________________________________ " << endl;
 	cout << "|                                                                                     |" << endl;
 	cout << "|\033[0m                    \033[33;1mSoftware Development for Algorithmic Problems\033[0m                    \033[33;1m|" << endl;
-	cout << "|\033[0m                             \033[33;1m2nd Assignment 2021-2021\033[0m                                \033[33;1m|" << endl;
+	cout << "|\033[0m                             \033[33;1m1st Assignment 2021-2021\033[0m                                \033[33;1m|" << endl;
 	cout << "|\033[0m                      \033[36;1mRovithakis Ioannis - Christos Tsouchlaris\033[0m                      \033[33;1m|" << endl;
 	cout << "|\033[0m                              \033[36;1msdi1800164 - sdi1800204\033[0m                                \033[33;1m|" << endl;
 	cout << "|_____________________________________________________________________________________|\033[0m" << endl;
@@ -178,7 +179,7 @@ unsigned generate_bit_from_h_key(unsigned h_key)
 }
 
 // Calculate the dot product between the two given vectors
-double dot_product(std::vector<int> x, std::vector<double> y){
+double dot_product(std::vector<double> x, std::vector<double> y){
 	double sum = 0;
 	for(unsigned i=0; i<(x.size()); i++){
 		sum += x[i] * y[i];
@@ -198,6 +199,22 @@ std::vector<int> sum_vectors(std::vector<int> *x, std::vector<int> *y){
 // Divide all the elements of 'x' by 'd'
 std::vector<int> div_vector(std::vector<int> *x, unsigned d){
 	std::vector<int> div;
+	for(unsigned i=0; i<(x->size()); i++){
+		div.push_back( (*x)[i] / d );
+	}
+	return div;
+}
+
+std::vector<double> sum_vectors(std::vector<double> *x, std::vector<double> *y){
+	std::vector<double> sum;
+	for(unsigned i=0; i<(x->size()); i++){
+		sum.push_back( (*x)[i] + (*y)[i] );
+	}
+	return sum;
+}
+
+std::vector<double> div_vector(std::vector<double> *x, unsigned d){
+	std::vector<double> div;
 	for(unsigned i=0; i<(x->size()); i++){
 		div.push_back( (*x)[i] / d );
 	}

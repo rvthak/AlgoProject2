@@ -27,9 +27,14 @@ int hamming_distance(int a, int b);
 unsigned convert_bit_array_to_decimal(std::vector<unsigned> bit_array);
 unsigned generate_bit_from_h_key(unsigned h_key);
 
-double dot_product(std::vector<int> x, std::vector<double> y);
+double dot_product(std::vector<double> x, std::vector<double> y);
+
 std::vector<int> sum_vectors(std::vector<int> *x, std::vector<int> *y);
 std::vector<int> div_vector(std::vector<int> *x, unsigned d);
+
+std::vector<double> sum_vectors(std::vector<double> *x, std::vector<double> *y);
+std::vector<double> div_vector(std::vector<double> *x, unsigned d);
+
 double sum_vector_elems(std::vector<double> *v);
 bool index_exists(unsigned index, std::vector<unsigned> *v);
 
