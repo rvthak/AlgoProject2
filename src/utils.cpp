@@ -106,7 +106,7 @@ void print_header(void){
 	cout << "\033[33;1m _____________________________________________________________________________________ " << endl;
 	cout << "|                                                                                     |" << endl;
 	cout << "|\033[0m                    \033[33;1mSoftware Development for Algorithmic Problems\033[0m                    \033[33;1m|" << endl;
-	cout << "|\033[0m                             \033[33;1m1st Assignment 2021-2021\033[0m                                \033[33;1m|" << endl;
+	cout << "|\033[0m                             \033[33;1m2nd Assignment 2021-2021\033[0m                                \033[33;1m|" << endl;
 	cout << "|\033[0m                      \033[36;1mRovithakis Ioannis - Christos Tsouchlaris\033[0m                      \033[33;1m|" << endl;
 	cout << "|\033[0m                              \033[36;1msdi1800164 - sdi1800204\033[0m                                \033[33;1m|" << endl;
 	cout << "|_____________________________________________________________________________________|\033[0m" << endl;
