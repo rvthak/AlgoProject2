@@ -15,15 +15,7 @@ Vector::Vector(){ this->id = 0; this->centroid = nullptr; }
 
 // Prints all the data stored in a Vector
 void Vector::print(){
-	cout << " Id: " << this->id << endl << "   > ";
-	for (double val: this->vec){
-		cout << val << ' ';
-	} cout << endl;
-}
-
-// Print the Vector Contents + Its name
-void Vector::print(std::string name){
-	cout << " Id: " << this->id << ", Name: " << name << endl << "   > ";
+	cout << " Id: " << this->id << ", Name: " << this->name << endl << "   > ";
 	for (double val: this->vec){
 		cout << val << ' ';
 	} cout << endl;
@@ -52,13 +44,6 @@ VectorArray::VectorArray(unsigned size){
 		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for file records." << endl;
 		exit(1);
 	}
-
-	// Allocate memory to store the Vector names
-	this->id_names = new string[this->size];
-	if( this->id_names == nullptr ){
-		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
-		exit(1);
-	}
 }
 
 // Create a VectorArray containing the given file contents
@@ -78,20 +63,13 @@ VectorArray::VectorArray(string filename){
 		exit(1);
 	}
 
-	// Allocate memory to store the Vector names
-	this->id_names = new string[this->size];
-	if( this->id_names == nullptr ){
-		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
-		exit(1);
-	}
-
 	// Parse the file and store the records
 	this->parse_input(filename);
 	//cout << " (i) Created VectorArray containing " << this->size << " vectors." << endl;
 }
 
 // Free a VectorArray
-VectorArray::~VectorArray(){ delete [] this->array; delete [] this->id_names;}
+VectorArray::~VectorArray(){ delete [] this->array; }
 
 // Add a vector in the given "index" of a VectorArray
 int VectorArray::add_vector(unsigned index, int id, string name, vector<double> data){
@@ -100,7 +78,7 @@ int VectorArray::add_vector(unsigned index, int id, string name, vector<double> 
 
 	this->array[index].id = id;
 	this->array[index].vec = data;
-	this->id_names[index] = name;
+	this->array[index].name = name;
 
 	return 0;
 }
@@ -108,7 +86,7 @@ int VectorArray::add_vector(unsigned index, int id, string name, vector<double> 
 // Prints all the Vectors Stored in a VectorArray
 void VectorArray::print(){
 	for(unsigned i=0; i<(this->size); i++){
-		(this->array)[i].print((this->id_names)[i]);
+		(this->array)[i].print();
 		cout << endl;
 	}
 }
@@ -363,13 +341,6 @@ AssignmentArray::AssignmentArray(std::string filename){
 		exit(1);
 	}
 
-	// Allocate memory to store the Vector names
-	this->id_names = new string[this->size];
-	if( this->id_names == nullptr ){
-		cout << "\033[31;1m (!) Fatal Error:\033[0m Memory <<  Failed to allocate memory for id names." << endl;
-		exit(1);
-	}
-
 	// Parse the file and store the records
 	this->parse_input(filename);
 
@@ -380,7 +351,7 @@ AssignmentArray::AssignmentArray(std::string filename){
 	}
 }
 
-AssignmentArray::~AssignmentArray(){ delete [] this->array; delete [] this->id_names; }
+AssignmentArray::~AssignmentArray(){ delete [] this->array; }
 
 // Store the Centroid and distance assigned to the Vector with the given id
 void AssignmentArray::assign(unsigned id, Centroid *centroid, double dist){
@@ -391,7 +362,7 @@ void AssignmentArray::assign(unsigned id, Centroid *centroid, double dist){
 // Prints all the Vectors Stored in the AssignmentArray
 void AssignmentArray::print(){
 	for(unsigned i=0; i<(this->size); i++){
-		(this->array)[i].print( (this->id_names)[i] );
+		(this->array)[i].print();
 		cout << " Centroid: " << endl;
 		if( (this->centroid)[i] == nullptr ){ cout << " NULL " << endl; }
 		else{ (this->centroid)[i]->print(); }
@@ -419,7 +390,7 @@ int AssignmentArray::add_vector(unsigned index, int id, string name, vector<doub
 	if( this->size < index ){ return 1; }
 	this->array[index].id = id;
 	this->array[index].vec = data;
-	this->id_names[index] = name;
+	this->array[index].name = name;
 	return 0;
 }
 

@@ -11,11 +11,11 @@ struct Vector{
 	unsigned id;			// The Vector's Id
 	std::vector<double> vec;	// The Vector Itself
 	void *centroid;			// A pointer to the assigned Centroid when clustering (if any)
+	std::string name;		// The id-name of the Vector
 
 	Vector();
 
-	void print();					// Print the Vector Contents
-	void print(std::string name);	// Print the Vector Contents + Its name
+	void print();			// Print the Vector Contents
 	double l2(Vector *p);	// Returns the l2 norm between the two vectors
 };
 
@@ -23,9 +23,9 @@ struct Vector{
 struct VectorArray{
 	unsigned size;	// The size of the Array == The amount of Vectors
 	Vector *array;	// The Vector Storage Array itself
-	std::string *id_names; // An array storing the names of each stock based on its id
 
 	VectorArray(unsigned size);
+
 	VectorArray(std::string filename);
 	~VectorArray();
 
@@ -78,7 +78,6 @@ private:
 struct AssignmentArray{
 	unsigned size;			// The size of the Array == The amount of Vectors
 	Vector   *array;		// The Vector Storage Array itself
-	std::string *id_names;	// An array storing the names of each stock based on its id
 
 	std::map<unsigned, Centroid *> centroid;	// Foreach Vector id -> Assigned Centroid
 	std::map<unsigned, double> dist;			// Foreach Vector id -> Distance to Assigned Centroid
