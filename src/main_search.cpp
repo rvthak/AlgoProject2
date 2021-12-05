@@ -15,10 +15,12 @@ double MAF = 0; // Max Approximation Factor
 unsigned count=0;
 
 void reset_stats();
-void report_statistics(std::string filename);
-void report_results(std::string filename, std::string id, std::string algo, 
+void report_statistics(std::string filename, bool ignoreTrue, double total_time);
+void report_results(std::string filename, std::string id, std::string algo, bool ignoreTrue, 
                     ShortedList *approx_r, double approx_time, 
                     ShortedList *true_r, double true_time);
+
+void clear_results(ShortedList **approx_res, ShortedList **true_res);
 void garbage_collector(MultiHash *lsh, Hypercube *cube);
 
 //------------------------------------------------------------------------------------------------------------------
@@ -40,7 +42,7 @@ int main(int argc, char *argv[]){
 	double approx_time, true_time;
 
 	// Pointers to the query results
-	ShortedList *approx_results, *true_results;
+	ShortedList *approx_results=nullptr, *true_results=nullptr;
 
 	// Enter the main program loop
 	while(running){
@@ -51,7 +53,7 @@ int main(int argc, char *argv[]){
 		t.tic();
 
 		// Load both the input and query file data
-		//VectorArray input_vecs(args.input_file);
+		VectorArray input_vecs(args.input_file);
 		VectorArray query_vecs(args.query_file);
 		//input_vecs.print();
 
@@ -61,18 +63,52 @@ int main(int argc, char *argv[]){
 
 		if( args.algorithm == "LSH" ){
 			lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
-			lsh->loadVectors(&query_vecs);
+			lsh->loadVectors(&input_vecs);
 		}
 		else if( args.algorithm == "Hypercube" ){
 			cube = new Hypercube(args.k, getFileLines(args.input_file)/DIVISION_SIZE_CUBE, getFileLineLength(args.input_file)-1);
 			cube->set_search_limits(args.probes, args.M, args.k);
-			cube->loadVectors(&query_vecs);
+			cube->loadVectors(&input_vecs);
 		}
 		else{ // Frechet
 			std::cout << " Frechet still under construction " << std::endl;
 			return 1;
 		}
 		print_structs_created(t.toc());
+
+		//------------------------------------------------------------------------------------------------------------------
+		
+		t.tic();
+		// Run tests for each query Vector:
+		for(unsigned i=0; i<(query_vecs.size); i++){
+
+			Vector *q = &((query_vecs.array)[i]);
+
+			// Run and time the tests
+			if( args.algorithm == "LSH" ){
+				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
+			} else if( args.algorithm == "Hypercube" ){
+				timer.tic(); cube->search_hypercube(q);
+				approx_results = cube->k_nearest_neighbors_search(1); approx_time = timer.toc();
+			}
+
+			if( args.notTrue == false ){
+				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1)); true_time = timer.toc();
+			}
+
+			// Write a report on the output file
+			report_results(args.output_file, q->name, args.algorithm, args.notTrue, approx_results, approx_time, true_results, true_time);
+
+			// Results written in output file => Free the memory
+			clear_results(&approx_results, &true_results);
+			std::cout << " > Query " << q->id << std::endl;
+
+		} std::cout << std::endl;
+
+		// Print Out Performance Stats
+		report_statistics( args.output_file, args.notTrue, t.toc() );
+
+		//------------------------------------------------------------------------------------------------------------------
 
 		// Garbage Collection
 		garbage_collector(lsh, cube);
@@ -94,8 +130,13 @@ void garbage_collector(MultiHash *lsh, Hypercube *cube){
 	if( cube != nullptr ){ delete cube; }
 }
 
+void clear_results(ShortedList **approx_res, ShortedList **true_res){
+	if( (*approx_res) != nullptr ){ delete *approx_res; (*approx_res) = nullptr; }
+	if( (*true_res)   != nullptr ){ delete *true_res;   (*true_res  ) = nullptr; }
+}
+
 // Write a report of the results for the given id on the output file
-void report_results(std::string filename, std::string id, std::string algo, ShortedList *approx_r, double approx_time, ShortedList *true_r, double true_time){
+void report_results(std::string filename, std::string id, std::string algo, bool ignoreTrue, ShortedList *approx_r, double approx_time, ShortedList *true_r, double true_time){
 	double cur_maf;
 
 	// Open the output file in append mode 
@@ -106,30 +147,41 @@ void report_results(std::string filename, std::string id, std::string algo, Shor
 	file << "Algorithm: " << algo << std::endl;
 
 	file << "Approximate Nearest neighbor: " << approx_r->first->v->name << std::endl;
-	file << "True Nearest neighbor: " << true_r->first->v->name << std::endl;
+	if( !ignoreTrue ){
+		file << "True Nearest neighbor: " << true_r->first->v->name << std::endl;
+	}
 
 	file << "distanceApproximate: " << approx_r->first->dist << std::endl;
-	file << "distanceTrue: " << true_r->first->dist << std::endl;
+	if( !ignoreTrue ){
+		file << "distanceTrue: " << true_r->first->dist << std::endl;
+	}
 
 	// Update any needed stat variables
 	approx_time_sum+=approx_time;
 	true_time_sum+=true_time;
-	
-	cur_maf = true_time/approx_time;
-	if( cur_maf > MAF ){ MAF = cur_maf; }
 	count++;
+
+	if( !ignoreTrue ){
+		cur_maf = true_time/approx_time;
+		if( cur_maf > MAF ){ MAF = cur_maf; }
+	}	
 
   	file << std::endl;
 }
 
 // Write the final statistics report on the output file
-void report_statistics(std::string filename){
+void report_statistics(std::string filename, bool ignoreTrue, double total_time){
 	// Open the output file in append mode 
 	std::ofstream file(filename, std::ios_base::app);
 
  	file << "tApproximateAverage: " << approx_time_sum/count << std::endl;
- 	file << "tTrueAverage: " << true_time_sum/count << std::endl;
- 	file << "MAF: " << MAF << std::endl;
+
+ 	if( !ignoreTrue ){
+ 		file << "tTrueAverage: " << true_time_sum/count << std::endl;
+ 		file << "MAF: " << MAF << std::endl;
+ 	}
+
+ 	print_total_time(total_time);
 }
 
 // Reset the values of the stat counters before the next run

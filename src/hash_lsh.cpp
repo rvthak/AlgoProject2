@@ -113,7 +113,7 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 	Bucket *bucket;
 	ShortedList *list = new ShortedList(k);
 
-	std::cout << " > Query id: " << query->id << std::endl;
+	//std::cout << " > Query id: " << query->id << std::endl;
 	// For each existing Hash Table
 	for(unsigned i=0; i<(this->amount); i++){
 		//std::cout << "\tSearching HT[" << i+1 << "]" << std::endl;

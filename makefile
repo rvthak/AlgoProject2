@@ -4,8 +4,8 @@
 CC=g++
 CFLAGS=-Wall -Iinclude
 
-INPUT_FILE=./datasets/nasdaq2015_2017.csv
-QUERY_FILE=./datasets/nasdaq2017_LQ.csv
+INPUT_FILE=./datasets/nasdaq2017_LQ.csv
+QUERY_FILE=./datasets/nasdaq2017_LQ_queries.csv
 CONFIG_FILE=./cluster.conf
 
 SEARCH_OUTPUT_FILE=search_out.txt
