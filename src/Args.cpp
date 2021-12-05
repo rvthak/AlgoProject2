@@ -724,6 +724,6 @@ void ARGS_Search::print(){
 	printf( "\033[33;1m| probes: \033[0m%-75d \033[33;1m|\033[0m\n", this->probes);
 	printf( "\033[33;1m| metric: \033[0m%-75s \033[33;1m|\033[0m\n", (this->metric).c_str());
 	printf( "\033[33;1m| delta:  \033[0m%-75.2f \033[33;1m|\033[0m\n", this->delta);
-	printf( "\033[33;1m| notTrue:\033[0m%-75d \033[33;1m|\033[0m\n", (int)(this->notTrue) );
+	printf( "\033[33;1m| notTrue: \033[0m%-74d \033[33;1m|\033[0m\n", (int)(this->notTrue) );
 	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
 }

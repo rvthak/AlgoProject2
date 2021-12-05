@@ -100,6 +100,7 @@ void MultiHash::loadVectors(VectorArray *arr){
 void MultiHash::loadVectors(AssignmentArray *arr){
 	// Add each vector to all the Hash tables
 	for(unsigned i=0; i<(arr->size); i++){
+		//std::cout << " > id: " << (arr->array)[i].id << std::endl;
 		this->add( &((arr->array)[i]) );
 	}
 }

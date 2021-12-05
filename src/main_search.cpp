@@ -5,6 +5,8 @@
 #include "utils.h"
 #include "Vector.h"
 #include "shortedList.h"
+#include "hash_lsh.h"
+#include "hash_cube.h"
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -17,6 +19,7 @@ void report_statistics(std::string filename);
 void report_results(std::string filename, std::string id, std::string algo, 
                     ShortedList *approx_r, double approx_time, 
                     ShortedList *true_r, double true_time);
+void garbage_collector(MultiHash *lsh, Hypercube *cube);
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -32,20 +35,50 @@ int main(int argc, char *argv[]){
 	args.load_defaults();
 	args.print();
 
+	// Create Timers to time the tests
+	Timer t, timer;
+	double approx_time, true_time;
+
+	// Pointers to the query results
+	ShortedList *approx_results, *true_results;
+
 	// Enter the main program loop
 	while(running){
 
 		// Ask for args (Asks only for "Empty" args)
 		args.read_args();
 		std::cout << "\033[36;1m (I)\033[33;1m Creating Structs and Loading Data... " << std::endl;
+		t.tic();
 
 		// Load both the input and query file data
-		VectorArray input_vecs(args.input_file);
+		//VectorArray input_vecs(args.input_file);
 		VectorArray query_vecs(args.query_file);
-		input_vecs.print();
+		//input_vecs.print();
+
+		// Build the user-selected Data structures
+		MultiHash *lsh = nullptr;
+		Hypercube *cube = nullptr;
+
+		if( args.algorithm == "LSH" ){
+			lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
+			lsh->loadVectors(&query_vecs);
+		}
+		else if( args.algorithm == "Hypercube" ){
+			cube = new Hypercube(args.k, getFileLines(args.input_file)/DIVISION_SIZE_CUBE, getFileLineLength(args.input_file)-1);
+			cube->set_search_limits(args.probes, args.M, args.k);
+			cube->loadVectors(&query_vecs);
+		}
+		else{ // Frechet
+			std::cout << " Frechet still under construction " << std::endl;
+			return 1;
+		}
+		print_structs_created(t.toc());
+
+		// Garbage Collection
+		garbage_collector(lsh, cube);
 
 		// Clear the old args and reset the stats
-		args.clear();
+		args.clear(); reset_stats();
 
 		// Ask user if he wants to stop the program
 		running = !question(" Would you like to exit the program?");
@@ -55,6 +88,11 @@ int main(int argc, char *argv[]){
 }
 
 //------------------------------------------------------------------------------------------------------------------
+
+void garbage_collector(MultiHash *lsh, Hypercube *cube){
+	if( lsh  != nullptr ){ delete lsh;  }
+	if( cube != nullptr ){ delete cube; }
+}
 
 // Write a report of the results for the given id on the output file
 void report_results(std::string filename, std::string id, std::string algo, ShortedList *approx_r, double approx_time, ShortedList *true_r, double true_time){
