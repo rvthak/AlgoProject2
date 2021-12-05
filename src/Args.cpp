@@ -487,3 +487,237 @@ void ARGS_Cluster::print(){
 	printf( "\033[33;1m| probes: \033[0m%-75d \033[33;1m|\033[0m\n", this->probes);
 	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
 }
+
+//------------------------------------------------------------------------------------------------------------------
+// SEARCH ARGS
+//------------------------------------------------------------------------------------------------------------------
+
+// Read any given initial terminal arguments and store them
+void ARGS_Search::read_terminal(int argc, char *argv[]){
+
+	// Get the argument values
+	for(int i=1; i<argc; i++){
+
+		// Check the argument flag first, then get the value
+		if( strcmp(argv[i],"-i")==0 ){
+			i++;
+			this->input_file = string(argv[i]);
+			arg_file_exists("input_file", this->input_file);
+		}
+		else if(strcmp(argv[i],"-q")==0){
+			i++;
+			this->query_file = string(argv[i]);
+			arg_file_exists("query_file", this->query_file);
+		}
+		else if(strcmp(argv[i],"-o")==0){
+			i++;
+			this->output_file = string(argv[i]);
+			// We do not check if the output file exists or not
+			// We just clear any existing contents
+			clearContents(this->output_file);
+		}
+		else if(strcmp(argv[i],"-algorithm")==0){
+			i++;
+			this->algorithm = string(argv[i]);
+			// Ensure that a supported algorithm was given
+			if( !(this->algorithm == "LSH") && !(this->algorithm == "Hypercube") && !(this->algorithm == "Frechet") ){
+				cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown algorithm " << this->algorithm << endl;
+				exit(1); 
+			}
+		}
+
+		else if(strcmp(argv[i],"-k")==0){
+			i++;
+			stringstream ss(argv[i]);
+			if( ss >> this->k ){}
+			else{ error_arg("k"); }
+		}
+		else if(strcmp(argv[i],"-L")==0){
+			i++;
+			stringstream ss(argv[i]);
+			if( ss >> this->L ){}
+			else{ error_arg("L"); }
+		}
+		else if(strcmp(argv[i],"-M")==0){
+			i++;
+			stringstream ss(argv[i]);
+			if( ss >> this->M ){}
+			else{ error_arg("M"); }
+		}
+		else if(strcmp(argv[i],"-probes")==0){
+			i++;
+			stringstream ss(argv[i]);
+			if( ss >> this->probes ){}
+			else{ error_arg("probes"); }
+		}
+		
+		else if(strcmp(argv[i],"-metric")==0){
+			i++;
+
+			this->metric = string(argv[i]);
+
+			// Ensure a supported metric was given
+			if( !(this->metric == "discrete") && !(this->metric == "continuous") ){
+				cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown metric " << this->algorithm << endl;
+				exit(1);
+			}
+
+			// Ensure that Frechet algorithm was chosen
+			if( !(this->algorithm == "Frechet") ){
+				if( this->algorithm == EMPTY_STRING ){
+					cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Given 'metric' arg before/without 'algorithm' arg. " << endl;
+				} else{
+					cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Given 'metric' arg with unsupported algorithm: " << this->algorithm << endl;
+				}
+				exit(1); 
+			}
+		}
+		else if(strcmp(argv[i],"-delta")==0){
+			i++;
+			stringstream ss(argv[i]);
+			if( ss >> this->delta ){}
+			else{ error_arg("delta"); }
+		}
+		// In case we dont get a known flag/string error
+		else {
+			cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown arg " << argv[i] << endl;
+			exit(1); 
+		}
+	}
+}
+
+// Ask the user for input on any currently "Empty" args
+void ARGS_Search::read_args(){
+
+	// Check if any arg is "Empty" and ask the user to fill it
+
+	if( this->input_file == EMPTY_FILE ){
+		read_arg("input_file");
+		if( cin >> this->input_file ){
+			arg_file_exists("input_file", this->input_file);
+		}
+		else{ error_arg("input_file"); }
+	}
+	if( this->query_file == EMPTY_FILE ){
+		read_arg("query_file");
+		if( cin >> this->query_file ){
+			arg_file_exists("query_file", this->query_file);
+		}
+		else{ error_arg("query_file"); }
+	}
+	if( this->output_file == EMPTY_FILE ){
+		read_arg("output_file");
+		if( cin >> this->output_file ){
+			// We do not check if the output file exists or not
+			// We just clear any existing contents
+			clearContents(this->output_file);
+		}
+		else{ error_arg("output_file"); }
+	}
+	if( this->algorithm == EMPTY_STRING ){
+		read_arg("algorithm");
+		if( cin >> this->algorithm ){
+			// We check if it is one of the supported ones
+			if( !(this->algorithm == "LSH") && !(this->algorithm == "Hypercube") && !(this->algorithm == "Frechet") ){
+				cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown algorithm " << this->algorithm << endl;
+				exit(1); 
+			}
+		}
+		else{ error_arg("algorithm"); }
+	}
+
+	if( ((this->algorithm == "LSH") || (this->algorithm == "Hypercube")) && this->k == EMPTY_INT ){
+		read_arg("k");
+		if( cin >> this->k ){}
+		else{ error_arg("k"); }
+	}
+	if( (this->algorithm == "LSH") && this->L == EMPTY_INT ){
+		read_arg("L");
+		if( cin >> this->L ){}
+		else{ error_arg("L"); }
+	}
+	if( (this->algorithm == "Hypercube") && this->M == EMPTY_INT ){
+		read_arg("M");
+		if( cin >> this->M ){}
+		else{ error_arg("M"); }
+	}
+	if( (this->algorithm == "Hypercube") && this->probes == EMPTY_INT ){
+		read_arg("probes");
+		if( cin >> this->probes ){}
+		else{ error_arg("probes"); }
+	}
+
+	if( (this->algorithm == "Frechet") && (this->metric == EMPTY_STRING) ){
+		read_arg("metric");
+		if( cin >> this->metric ){
+
+			// Ensure a supported metric was given
+			if( !(this->metric == "discrete") && !(this->metric == "continuous") ){
+				cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown metric " << this->algorithm << endl;
+				exit(1);
+			}
+
+			// Ensure that Frechet algorithm was chosen
+			if( !(this->algorithm == "Frechet") ){
+				if( this->algorithm == EMPTY_STRING ){
+					cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Given 'metric' arg before/without 'algorithm' arg. " << endl;
+				} else{
+					cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Given 'metric' arg with unsupported algorithm: " << this->algorithm << endl;
+				}
+				exit(1); 
+			}
+		}
+		else{ error_arg("metric"); }
+	}
+	if( this->delta == EMPTY_FLOAT ){
+		read_arg("delta");
+		if( cin >> this->delta ){}
+		else{ error_arg("delta"); }
+	}
+}
+
+// Fill "Empty" args with default values where possible
+void ARGS_Search::load_defaults(){
+	if( this->algorithm == "LSH" ){
+		if( this->k == EMPTY_INT ){ this->k = LSH_DEFAULT_K; }
+		if( this->L == EMPTY_INT ){ this->L = LSH_DEFAULT_L; }
+	}
+	else if( this->algorithm == "Hypercube" ){
+		if( this->k == EMPTY_INT ){ this->k = CUBE_DEFAULT_K; }
+		if( this->M == EMPTY_INT ){ 	 this->M = CUBE_DEFAULT_M; }
+		if( this->probes == EMPTY_INT ){ this->probes = CUBE_DEFAULT_PROBES; }
+	}
+}
+
+// Set the args to "Empty"
+void ARGS_Search::clear(){
+	this->input_file = EMPTY_FILE;
+	this->query_file = EMPTY_FILE;
+	this->output_file = EMPTY_FILE;
+	this->algorithm = EMPTY_STRING;
+
+	this->k = EMPTY_INT;
+	this->L = EMPTY_INT;
+	this->M = EMPTY_INT;
+	this->probes = EMPTY_INT;
+
+	this->metric = EMPTY_STRING;
+	this->delta = EMPTY_FLOAT;
+}
+
+// Print the curent args
+void ARGS_Search::print(){
+	cout << "\033[33;1m _____________________________________________________________________________________\033[0m"  << endl;
+	cout << "\033[33;1m|                                                                                     |\033[0m" << endl;
+	printf( "\033[33;1m| input_file: \033[0m %-70s \033[33;1m|\033[0m\n", (this->input_file).c_str());
+	printf( "\033[33;1m| query_file: \033[0m %-70s \033[33;1m|\033[0m\n", (this->query_file).c_str());
+	printf( "\033[33;1m| output_file: \033[0m%-70s \033[33;1m|\033[0m\n", (this->output_file).c_str());
+	printf( "\033[33;1m| algorithm:   \033[0m%-70s \033[33;1m|\033[0m\n", (this->algorithm).c_str());
+	printf( "\033[33;1m| k: \033[0m%-80d \033[33;1m|\033[0m\n", this->k);
+	printf( "\033[33;1m| L: \033[0m%-80d \033[33;1m|\033[0m\n", this->L);
+	printf( "\033[33;1m| M: \033[0m%-80d \033[33;1m|\033[0m\n", this->M);
+	printf( "\033[33;1m| probes: \033[0m%-75d \033[33;1m|\033[0m\n", this->probes);
+	printf( "\033[33;1m| metric: \033[0m%-75s \033[33;1m|\033[0m\n", (this->metric).c_str());
+	printf( "\033[33;1m| delta:  \033[0m%-75.2f \033[33;1m|\033[0m\n", this->delta);
+	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
+}

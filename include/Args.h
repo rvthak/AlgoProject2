@@ -72,4 +72,29 @@ struct ARGS_Cluster{
 	void print();
 };
 
+//------------------------------------------------------------------------------------------------------------------
+
+struct ARGS_Search{
+	std::string input_file, query_file, output_file;
+	std::string algorithm; // The algorithm that will be used
+
+	int k;		// The Projection Dimention
+	int L;		// Amount of Hash tables used
+	int M;		// Max amount of points checked
+	int probes;	// Max amount of cube vertices checked
+
+	std::string metric;	// The metric that will be used for frechet distance
+	double delta;		// Delta value used for grid
+
+	// Initialize all args to "Empty" using an initializer list
+	ARGS_Search():input_file(EMPTY_FILE), query_file(EMPTY_FILE), output_file(EMPTY_FILE), algorithm(EMPTY_FILE),
+	              k(EMPTY_INT), L(EMPTY_INT), M(EMPTY_INT), probes(EMPTY_INT), metric(EMPTY_FILE), delta(EMPTY_FLOAT){}
+
+	void read_terminal(int argc, char *argv[]);
+	void read_args();
+	void load_defaults();
+	void clear();
+	void print();
+};
+
 #endif
