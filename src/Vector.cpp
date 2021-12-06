@@ -33,6 +33,116 @@ double Vector::l2(Vector *p){
 	return sqrt(sum);
 }
 
+double Vector::discrete_frechet_distance(Vector *p)
+{
+    Vector* q = this;
+
+    unsigned length_p = (p->vec.size()) - 1;
+    unsigned length_q = (q->vec.size()) - 1;
+
+    double** c = new double*[length_q];
+
+    for (unsigned i = 0; i < length_q; i++)
+    {
+        c[i] = new double[length_p];
+    }
+
+    for (unsigned i = 0; i < length_p; i++)
+    {
+        for (unsigned j = 0; j < length_q; j++)
+        {
+            c[i][j] = -1;
+        }
+    }
+
+    int p1 = p->vec[1];
+    int q1 = q->vec[1];
+
+    c[1][1] =  abs(p1 - q1);
+
+    double distance = this->dfd_calculation(c, length_p, length_q, p, q);
+
+    return distance;
+}
+
+double Vector::dfd_calculation(double** c, unsigned i, unsigned j, Vector* p, Vector* q)
+{
+    if (c[i][j] > -1)
+        return c[i][j];
+
+    if (i == 1 && j > 1)
+    {
+        unsigned p1 = p->vec[1];
+        unsigned qj = q->vec[j];
+
+        int subtraction = p1 - qj;
+
+        c[1][j] = max(this->dfd_calculation(c, 1, (j - 1), p, q), abs(subtraction));
+    }
+    else if (i > 1 && j == 1)
+    {
+        unsigned pi = p->vec[i];
+        unsigned q1 = p->vec[1];
+
+        int subtraction = pi - q1;
+
+        c[i][1] = max(this->dfd_calculation(c, (i - 1), 1, p, q), abs(subtraction));
+    }
+    else if (i > 1 && j > 1)
+    {
+        unsigned pi = p->vec[i];
+        unsigned qj = p->vec[j];
+
+        int subtraction = pi - qj;
+
+        double c1 = this->dfd_calculation(c, (i - 1), j, p, q);
+        double c2 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
+        double c3 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
+
+        double min_c = min({c1, c2, c3});
+
+        c[i][j] = max(min_c, abs(subtraction));
+    }
+
+    return c[i][j];
+}
+
+Vector* Vector::filter_vector(unsigned e)
+{
+    Vector* filtered_vector = new Vector();
+    filtered_vector->id = this->id;
+
+    unsigned current_vector_length = this->vec.size();
+
+    for (unsigned i = 0; i < current_vector_length; i++)
+    {
+        unsigned index_a = i;
+        unsigned index_b = i + 1;
+        unsigned index_c = i + 2;
+
+        if (index_a > current_vector_length && index_b > current_vector_length && index_c > current_vector_length)
+            return filtered_vector;
+
+        int a = this->vec[index_a];
+        int b = this->vec[index_b];
+        int c = this->vec[index_c];
+
+        if (abs(a - b) <= e && abs(b - c) <= e)
+        {
+            filtered_vector->vec.push_back(a);
+            filtered_vector->vec.push_back(c);
+        }
+        else
+        {
+            filtered_vector->vec.push_back(a);
+            filtered_vector->vec.push_back(b);
+            filtered_vector->vec.push_back(c);
+        }
+    }
+
+    return filtered_vector;
+}
+
 //------------------------------------------------------------------------------------------------------------------
 
 VectorArray::VectorArray(unsigned size){
