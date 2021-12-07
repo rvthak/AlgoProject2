@@ -109,7 +109,7 @@ int main(int argc, char *argv[]){
 			// Run and time the tests
 			if( args.algorithm == "LSH" )
 			{
-				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
+				timer.tic();  approx_results = lsh->kNN_lsh_discrete_frechet(q , 1); approx_time = timer.toc();
 			} 
 			else if( args.algorithm == "Hypercube" )
 			{

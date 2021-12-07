@@ -71,6 +71,8 @@ double Vector::discrete_frechet_distance(Vector *p)
 
 	cout << "Going into recursion!" << endl;
 
+
+
     double distance = this->dfd_calculation(c, length_p, length_q, p, q);
 
     return distance;
@@ -83,6 +85,8 @@ double Vector::dfd_calculation(double** c, unsigned i, unsigned j, Vector* p, Ve
 
     if (i == 1 && j > 1)
     {
+		cout << "i == 1 && j > 1" << endl;
+
         unsigned p1 = p->vec[1];
         unsigned qj = q->vec[j];
 
@@ -92,6 +96,8 @@ double Vector::dfd_calculation(double** c, unsigned i, unsigned j, Vector* p, Ve
     }
     else if (i > 1 && j == 1)
     {
+		cout << "i > 1 && j == 1" << endl;
+
         unsigned pi = p->vec[i];
         unsigned q1 = p->vec[1];
 
@@ -101,6 +107,8 @@ double Vector::dfd_calculation(double** c, unsigned i, unsigned j, Vector* p, Ve
     }
     else if (i > 1 && j > 1)
     {
+		cout << "i > 1 && j > 1" << endl;
+
         unsigned pi = p->vec[i];
         unsigned qj = p->vec[j];
 
