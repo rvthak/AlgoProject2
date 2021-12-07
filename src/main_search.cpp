@@ -71,6 +71,22 @@ int main(int argc, char *argv[]){
 			cube->loadVectors(&input_vecs);
 		}
 		else{ // Frechet
+
+			// CHRIS 07.12.2021 START
+
+			if (args.metric == "discrete")
+			{
+				lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
+				lsh->loadVectors(&input_vecs);
+			}
+			else if (args.metric == "continuous")
+			{
+				lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
+				lsh->loadVectors(&input_vecs);
+			}
+
+			// CHRIS 07.12.2021 END
+
 			std::cout << " Frechet still under construction " << std::endl;
 			return 1;
 		}
@@ -84,17 +100,44 @@ int main(int argc, char *argv[]){
 
 			Vector *q = &((query_vecs.array)[i]);
 
+			// CHRIS 07.12.2021 START
+
 			// Run and time the tests
-			if( args.algorithm == "LSH" ){
+			if( args.algorithm == "LSH" )
+			{
 				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
-			} else if( args.algorithm == "Hypercube" ){
+			} 
+			else if( args.algorithm == "Hypercube" )
+			{
 				timer.tic(); cube->search_hypercube(q);
 				approx_results = cube->k_nearest_neighbors_search(1); approx_time = timer.toc();
 			}
+			else
+			{
+				if (args.metric == "discrete")
+				{
+					timer.tic();
 
-			if( args.notTrue == false ){
+					// approx_results = lsh->kNN_lsh_discrete_frechet(q , 1);
+
+					approx_time = timer.toc();
+				}
+				else if (args.metric == "continuous")
+				{
+					timer.tic();			
+
+					// Use the frechet distance library
+					
+					approx_time = timer.toc();
+				}
+			}
+
+			if ( args.notTrue == false )
+			{
 				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1)); true_time = timer.toc();
 			}
+
+			// CHRIS 07.12.2021 END
 
 			// Write a report on the output file
 			report_results(args.output_file, q->name, args.algorithm, args.notTrue, approx_results, approx_time, true_results, true_time);
