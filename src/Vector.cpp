@@ -35,10 +35,15 @@ double Vector::l2(Vector *p){
 
 double Vector::discrete_frechet_distance(Vector *p)
 {
+	cout << "Welcome to discrete frechet distance!" << endl;
+
     Vector* q = this;
 
     unsigned length_p = (p->vec.size()) - 1;
     unsigned length_q = (q->vec.size()) - 1;
+
+	cout << "length_p : " << length_p << endl;
+	cout << "length_q : " << length_p << endl; 
 
     double** c = new double*[length_q];
 
@@ -46,6 +51,8 @@ double Vector::discrete_frechet_distance(Vector *p)
     {
         c[i] = new double[length_p];
     }
+
+	cout << "Allocated 2D array!" << endl;
 
     for (unsigned i = 0; i < length_p; i++)
     {
@@ -55,10 +62,14 @@ double Vector::discrete_frechet_distance(Vector *p)
         }
     }
 
+	cout << "Initialized 2D array!" << endl;
+
     int p1 = p->vec[1];
     int q1 = q->vec[1];
 
     c[1][1] =  abs(p1 - q1);
+
+	cout << "Going into recursion!" << endl;
 
     double distance = this->dfd_calculation(c, length_p, length_q, p, q);
 

@@ -56,7 +56,7 @@ double HashTable::averageBucketSize(){
 
 // Allocate L hash tables, and set their hash functions to use k "h" sub-hash-functions
 MultiHash::MultiHash(int k, int L, unsigned tableSize, unsigned v_size){
-	//std::cout << " Creating Multihash > k: " << k << ", L: " << L << ", TableSize: " << tableSize << ", VectorSize: " << v_size << std::endl;
+	std::cout << " Creating Multihash > k: " << k << ", L: " << L << ", TableSize: " << tableSize << ", VectorSize: " << v_size << std::endl;
 	// Allocate the Hash tables
 	if( (this->array = new HashTable*[L]) == nullptr ){ 
 		std::cout << "\033[31;1m (!) Fatal Error:\033[0m MultiHash Built : Failed to allocate memory." << std::endl;
@@ -150,6 +150,67 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 	}
 	return list;
 }
+
+// CHRIS 07.12.2021 START
+
+ShortedList *MultiHash::kNN_lsh_discrete_frechet(Vector *query, unsigned k)
+{
+	std::cout << "Welcome to kNN_lsh_discrete_frechet!" << std::endl;
+
+	unsigned long key;
+	unsigned long ID;
+	unsigned id_matches=0;
+	Bucket *bucket;
+	ShortedList *list = new ShortedList(k);
+
+	// For each existing Hash Table
+
+	for (unsigned i = 0; i < (this->amount); i++)
+	{
+		id_matches=0;
+
+		// Calculate the ID of the query vector
+		ID = ((this->array)[i])->g->ID(query);
+
+		// Find the correct bucket based on the hash key
+		key    = mod(ID , ((this->array)[i])->g->tableSize);
+		bucket = &((((this->array)[i])->bucs)[key]);
+
+		// Check the bucket and store only the nearest Vectors
+		Bucket_node *cur = bucket->first;
+
+		while (cur != nullptr)
+		{
+			// Only check Vectors with the same ID to avoid computing unnecessary distances
+
+			if (cur->ID == ID)
+			{
+				list->add( cur->data, query->discrete_frechet_distance(cur->data));
+				id_matches++;
+			}
+
+			cur = cur->next;
+		}
+
+		// In case we fail to find enough ID matches, just ignore the IDs
+
+		if (id_matches > k)
+		{
+			cur = bucket->first;
+
+			while (cur != nullptr)
+			{
+				list->add(cur->data, query->discrete_frechet_distance(cur->data));
+				cur = cur->next;
+			}
+		}
+	}
+
+	return list;
+}
+
+// CHRIS 07.12.2021 END
+
 
 // Range search for the k approximate Nearest Neighbors of the given query Vector
 List *MultiHash::range_search(Vector *query, double R){

@@ -76,8 +76,12 @@ int main(int argc, char *argv[]){
 
 			if (args.metric == "discrete")
 			{
+				cout << "Going to initialize LSH struct!" << endl;
+
 				lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
 				lsh->loadVectors(&input_vecs);
+
+				cout << "Initialized LSH struct!" << endl;
 			}
 			else if (args.metric == "continuous")
 			{
