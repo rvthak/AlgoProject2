@@ -188,6 +188,10 @@ ShortedList *MultiHash::kNN_lsh_discrete_frechet(Vector *query, unsigned k)
 
 			if (cur->ID == ID)
 			{
+				double distance = query->discrete_frechet_distance(cur->data);
+
+				std::cout << "Distance : " << distance << std::endl;
+
 				list->add( cur->data, query->discrete_frechet_distance(cur->data));
 				id_matches++;
 			}
@@ -203,6 +207,10 @@ ShortedList *MultiHash::kNN_lsh_discrete_frechet(Vector *query, unsigned k)
 
 			while (cur != nullptr)
 			{
+				double distance = query->discrete_frechet_distance(cur->data);
+
+				std::cout << "Distance : " << distance << std::endl;
+
 				list->add(cur->data, query->discrete_frechet_distance(cur->data));
 				cur = cur->next;
 			}
