@@ -35,7 +35,7 @@ double Vector::l2(Vector *p){
 
 double Vector::discrete_frechet_distance(Vector *p)
 {
-	cout << "Welcome to discrete frechet distance!" << endl;
+	// cout << "Welcome to discrete frechet distance!" << endl;
 
     Vector* q = this;
 
@@ -45,10 +45,12 @@ double Vector::discrete_frechet_distance(Vector *p)
 	// cout << "length_p : " << length_p << endl;
 	// cout << "length_q : " << length_p << endl; 
 
+	double** c = new double*[length_q];
     double** distances = new double*[length_q];
 
     for (unsigned i = 0; i < length_q; i++)
     {
+		c[i] = new double[length_p];
         distances[i] = new double[length_p];
     }
 
@@ -70,69 +72,51 @@ double Vector::discrete_frechet_distance(Vector *p)
         }
     }
 
-	cout << "Initialized 2D array!" << endl;
+	// cout << "Initialized 2D array!" << endl;
 
-    int p1 = p->vec[1];
-    int q1 = q->vec[1];
 
-    distances[1][1] =  abs(p1 - q1);
+	for (unsigned i = 0; i < length_p; i++)
+    {
+        for (unsigned j = 0; j < length_q; j++)
+        {
+			if (i == 0 && j == 0) 
+				c[i][j] = distances[i][j];
+			else if (i == 0 && j > 0)
+				c[i][j] = max(c[i][j - 1], distances[i][j]);
+			else if (i > 0 && j == 0)
+				c[i][j] = max(c[i - 1][j], distances[i][j]);
+			else
+				c[i][j] = max(min(min(c[i - 1][j], c[i - 1][j - 1]), c[i][j - 1]), distances[i][j]);
 
-	cout << "Going into recursion!" << endl;
+			cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+		}
+	}
+
+	cout << "Finished loop!" << endl;
+
+	cout << "Discrete Frechet Distance : " << c[length_p - 1][length_q - 2] << endl;
+
+	if (c[length_p][length_q] == NULL)
+		cout << "NUUUUUULLLLLLLLLL!!!!" << endl;
+
+	// double distance = c[length_p][length_q];
+    
+	// int p1 = p->vec[1];
+    // int q1 = q->vec[1];
+
+    // distances[1][1] =  abs(p1 - q1);
+
+	// cout << "Going into recursion!" << endl;
 
     // double distance = this->dfd_calculation(distances, length_p, length_q, p, q);
 
-	double distance = 0;
+	// double distance = 0;
 
-    return distance;
+	// cout << "Discrete Frechet Distance : " << distance << endl;
+
+    return 0;
 }
 
-double Vector::dfd_calculation(double** c, unsigned i, unsigned j, Vector* p, Vector* q)
-{
-    if (c[i][j] > -1)
-        return c[i][j];
-
-    if (i == 1 && j > 1)
-    {
-		cout << "i == 1 && j > 1" << endl;
-
-        unsigned p1 = p->vec[1];
-        unsigned qj = q->vec[j];
-
-        int subtraction = p1 - qj;
-
-        c[1][j] = max(this->dfd_calculation(c, 1, (j - 1), p, q), abs(subtraction));
-    }
-    else if (i > 1 && j == 1)
-    {
-		cout << "i > 1 && j == 1" << endl;
-
-        unsigned pi = p->vec[i];
-        unsigned q1 = p->vec[1];
-
-        int subtraction = pi - q1;
-
-        c[i][1] = max(this->dfd_calculation(c, (i - 1), 1, p, q), abs(subtraction));
-    }
-    else if (i > 1 && j > 1)
-    {
-		cout << "i > 1 && j > 1" << endl;
-
-        unsigned pi = p->vec[i];
-        unsigned qj = p->vec[j];
-
-        int subtraction = pi - qj;
-
-        double c1 = this->dfd_calculation(c, (i - 1), j, p, q);
-        double c2 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
-        double c3 = this->dfd_calculation(c, (i - 1), (j - 1), p, q);
-
-        double min_c = min({c1, c2, c3});
-
-        c[i][j] = max(min_c, abs(subtraction));
-    }
-
-    return c[i][j];
-}
 
 Vector* Vector::filter_vector(unsigned e)
 {

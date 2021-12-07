@@ -62,6 +62,9 @@ MultiHash::MultiHash(int k, int L, unsigned tableSize, unsigned v_size){
 		std::cout << "\033[31;1m (!) Fatal Error:\033[0m MultiHash Built : Failed to allocate memory." << std::endl;
 		exit(1);
 	}
+
+	std::cout << "Creared HashTable!" << std::endl;
+
 	for(int i=0; i<L; i++){
 		if( ((this->array)[i] = new HashTable(k, tableSize, v_size)) == nullptr ){
 			std::cout << "\033[31;1m (!) Fatal Error:\033[0m MultiHash Built : Failed to allocate memory." << std::endl;
