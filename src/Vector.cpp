@@ -88,13 +88,15 @@ double Vector::discrete_frechet_distance(Vector *p)
 			else
 				c[i][j] = max(min(min(c[i - 1][j], c[i - 1][j - 1]), c[i][j - 1]), distances[i][j]);
 
-			// cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+			cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 		}
 	}
 
 	// cout << "Finished loop!" << endl;
 
-	double distance = c[length_p - 1][length_q - 2];
+	cout << length_p << "  " << length_q << endl;
+
+	double distance = sqrt(c[length_p - 4][length_q - 4]);
 
 	// cout << "Discrete Frechet Distance : " << distance << endl;
 
