@@ -35,15 +35,10 @@ double Vector::l2(Vector *p){
 
 double Vector::discrete_frechet_distance(Vector *p)
 {
-	// cout << "Welcome to discrete frechet distance!" << endl;
-
     Vector* q = this;
 
-    unsigned length_p = (p->vec.size()) - 1;
-    unsigned length_q = (q->vec.size()) - 1;
-
-	// cout << "length_p : " << length_p << endl;
-	// cout << "length_q : " << length_p << endl; 
+	unsigned length_p = (p->vec.size());
+    unsigned length_q = (q->vec.size());
 
 	double** c = new double*[length_q];
     double** distances = new double*[length_q];
@@ -54,7 +49,39 @@ double Vector::discrete_frechet_distance(Vector *p)
         distances[i] = new double[length_p];
     }
 
-	// cout << "Allocated 2D array!" << endl;
+	// Initialize the c[0][0] element. Just the distance between the fisrt points of the curves
+	
+	double x0_p = 0;
+	double y0_p = p->vec[0];
+
+	double x0_q = 0;
+	double y0_q = q->vec[0];
+
+	c[0][0] = euclidian_distance(x0_p, y0_p, x0_q, y0_q);
+
+	// Intitialize the fisrt rows of each vector
+
+	for (unsigned i = 1; i < length_q; i++)
+	{
+		double xi_q = i;
+		double yi_q = q->vec[i];
+
+		c[0][i] = euclidian_distance(x0_p, y0_p, xi_q, yi_q);
+
+		// cout << "c[" << 0 << "][" << i << "] : " << c[0][i] << endl;
+	}
+
+	for (unsigned j = 1; j < length_p; j++)
+	{
+		double xj_p = j;
+		double yj_p = p->vec[j];
+
+		c[j][0] = euclidian_distance(xj_p, yj_p, x0_q, y0_q);
+
+		// cout << "c[" << j << "][" << 0 << "] : " << c[j][0] << endl;
+	}
+
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 
     for (unsigned i = 0; i < length_p; i++)
     {
@@ -71,8 +98,6 @@ double Vector::discrete_frechet_distance(Vector *p)
 			// cout << "distances[" << i << "][" << j << "] : " << distances[i][j] << endl;
         }
     }
-
-	// cout << "Initialized 2D array!" << endl;
 
 
 	for (unsigned i = 0; i < length_p; i++)
@@ -92,36 +117,13 @@ double Vector::discrete_frechet_distance(Vector *p)
 		}
 	}
 
-	// cout << "Finished loop!" << endl;
-
-	// cout << length_p << "  " << length_q << endl;
-
 	double distance = sqrt(c[length_p - 2][length_q - 1]);
 
 	// cout << "Discrete Frechet Distance : " << distance << endl;
-
-	// if (c[length_p][length_q] == NULL)
-	// 	cout << "NUUUUUULLLLLLLLLL!!!!" << endl;
-
 	
-
     return distance;
 
-	// double distance = c[length_p][length_q];
-    
-	// int p1 = p->vec[1];
-    // int q1 = q->vec[1];
-
-    // distances[1][1] =  abs(p1 - q1);
-
-	// cout << "Going into recursion!" << endl;
-
-    // double distance = this->dfd_calculation(distances, length_p, length_q, p, q);
-
-	// double distance = 0;
-
-	// cout << "Discrete Frechet Distance : " << distance << endl;
-
+	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 }
 
 
