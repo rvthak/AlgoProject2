@@ -67,8 +67,6 @@ double Vector::discrete_frechet_distance(Vector *p)
 		double yi_q = q->vec[i];
 
 		c[0][i] = euclidian_distance(x0_p, y0_p, xi_q, yi_q);
-
-		// cout << "c[" << 0 << "][" << i << "] : " << c[0][i] << endl;
 	}
 
 	for (unsigned j = 1; j < length_p; j++)
@@ -77,11 +75,7 @@ double Vector::discrete_frechet_distance(Vector *p)
 		double yj_p = p->vec[j];
 
 		c[j][0] = euclidian_distance(xj_p, yj_p, x0_q, y0_q);
-
-		// cout << "c[" << j << "][" << 0 << "] : " << c[j][0] << endl;
 	}
-
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 
     for (unsigned i = 1; i < length_p; ++i)
     {
@@ -124,11 +118,6 @@ double Vector::discrete_frechet_distance(Vector *p)
 	double distance = c[length_p - 1][length_q - 1];
 	
     return distance;
-
-	// cout << "Discrete Frechet Distance : " << distance << endl;
-	// double distance = sqrt(c[length_p - 2][length_q - 1]);
-
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 }
 
 
