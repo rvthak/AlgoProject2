@@ -108,16 +108,16 @@ double Vector::discrete_frechet_distance(Vector *p)
 			if (i == 1 && j == 1) 
 				c[i][j] = distances[i][j];
 			else if (i == 1 && j > 1)
-				c[1][j] = max(c[i][j - 1], distances[1][j]);
+				c[1][j] = max(c[1][j - 1], distances[1][j]);
 			else if (i > 1 && j == 1)
 				c[i][1] = max(c[i - 1][1], distances[i][1]);
 			else
-				c[i][j] = max(min(min(c[i - 1][j], c[i - 1][j - 1]), c[i][j - 1]), distances[i][j]);
+				c[i][j] = max(min({c[i - 1][j], c[i - 1][j - 1], c[i][j - 1]}), distances[i][j]);
 			
 			// if ((i == 119 && j == 119) || (i == 118 && j == 118) || (i == 117 && j == 117) || (i == 116 && j == 116) || (i == 115 && j == 115)) 
 			
-			if ((i == 119) || (j == 119))
-				cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+			// if ((i == 119) || (j == 119))
+			// 	cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 		}
 	}
 
