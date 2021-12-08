@@ -66,7 +66,7 @@ double Vector::discrete_frechet_distance(Vector *p)
 			double x_j = j;
 			double y_j = p->vec[j];
 
-            distances[i][j] = distance_between_points(x_i, y_i, x_j, y_j);
+            distances[i][j] = euclidian_distance(x_i, y_i, x_j, y_j);
 
 			// cout << "distances[" << i << "][" << j << "] : " << distances[i][j] << endl;
         }

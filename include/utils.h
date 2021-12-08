@@ -43,7 +43,7 @@ bool positive_less_than(double x, double y);
 
 // CHRIS 07.12.2021 START
 
-double distance_between_points(double x1, double y1, double x2, double y2);
+double euclidian_distance(double x1, double y1, double x2, double y2);
 
 // CHRIS 07.12.2021 END
 
