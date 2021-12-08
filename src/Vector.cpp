@@ -83,9 +83,9 @@ double Vector::discrete_frechet_distance(Vector *p)
 
 	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 
-    for (unsigned i = 0; i < length_p; i++)
+    for (unsigned i = 1; i < length_p; i++)
     {
-        for (unsigned j = 0; j < length_q; j++)
+        for (unsigned j = 1; j < length_q; j++)
         {
 			double x_i = i;
 			double y_i = p->vec[i];
@@ -100,28 +100,33 @@ double Vector::discrete_frechet_distance(Vector *p)
     }
 
 
-	for (unsigned i = 0; i < length_p; i++)
+	for (unsigned i = 1; i < length_p; ++i)
     {
-        for (unsigned j = 0; j < length_q; j++)
+        for (unsigned j = 1; j < length_q; ++j)
         {
-			if (i == 0 && j == 0) 
+
+			if (i == 1 && j == 1) 
 				c[i][j] = distances[i][j];
-			else if (i == 0 && j > 0)
-				c[i][j] = max(c[i][j - 1], distances[i][j]);
-			else if (i > 0 && j == 0)
-				c[i][j] = max(c[i - 1][j], distances[i][j]);
+			else if (i == 1 && j > 1)
+				c[1][j] = max(c[i][j - 1], distances[1][j]);
+			else if (i > 1 && j == 1)
+				c[i][1] = max(c[i - 1][1], distances[i][1]);
 			else
 				c[i][j] = max(min(min(c[i - 1][j], c[i - 1][j - 1]), c[i][j - 1]), distances[i][j]);
-
-			// cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+			
+			// if ((i == 119 && j == 119) || (i == 118 && j == 118) || (i == 117 && j == 117) || (i == 116 && j == 116) || (i == 115 && j == 115)) 
+			
+			if ((i == 119) || (j == 119))
+				cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 		}
 	}
 
-	double distance = sqrt(c[length_p - 2][length_q - 1]);
-
-	// cout << "Discrete Frechet Distance : " << distance << endl;
+	double distance = c[length_p - 1][length_q - 1];
 	
     return distance;
+
+	// cout << "Discrete Frechet Distance : " << distance << endl;
+	// double distance = sqrt(c[length_p - 2][length_q - 1]);
 
 	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 }
