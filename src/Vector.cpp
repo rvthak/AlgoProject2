@@ -83,9 +83,9 @@ double Vector::discrete_frechet_distance(Vector *p)
 
 	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 
-    for (unsigned i = 1; i < length_p; i++)
+    for (unsigned i = 1; i < length_p; ++i)
     {
-        for (unsigned j = 1; j < length_q; j++)
+        for (unsigned j = 1; j < length_q; ++j)
         {
 			double x_i = i;
 			double y_i = p->vec[i];
@@ -100,9 +100,9 @@ double Vector::discrete_frechet_distance(Vector *p)
     }
 
 
-	for (unsigned i = 1; i < length_p; ++i)
+	for (unsigned i = 1; i < length_p; i++)
     {
-        for (unsigned j = 1; j < length_q; ++j)
+        for (unsigned j = 1; j < length_q; j++)
         {
 
 			if (i == 1 && j == 1) 
