@@ -88,20 +88,51 @@ int main(int argc, char *argv[]){
 			{
 				int dimensions = 2;
 
-				Point* test_point1 = new Point(dimensions);
+				Curve* test_curve1 = new Curve(dimensions, "test_curve1");
+				Curve* test_curve2 = new Curve(dimensions, "test_curve2");
 
-				test_point1->set(0 , 0);
-				test_point1->set(1, input_vecs.array[0].vec[0]);
+				for (unsigned i = 0; i < input_vecs.array[0].vec.size(); i ++)
+				{
+					Point* test_point = new Point(dimensions);
 
-				Point* test_point2 = new Point(dimensions);
+					test_point->set(0 , i);
+					test_point->set(1, input_vecs.array[0].vec[i]);
 
-				test_point2->set(0 , 0);
-				test_point2->set(1, input_vecs.array[0].vec[1]);
+					test_curve1->push_back(*test_point);
+					
+					cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+				}
 
-				cout << "Test points created with dimensions : " << test_point1->dimensions() << endl;
-				cout << "And coordinates :" << endl;
-				cout << "X1 : " << test_point1->get(0) << " Y1 : " << test_point1->get(1) << endl;
-				cout << "X2 : " << test_point2->get(0) << " Y2 : " << test_point2->get(1) << endl;
+				for (unsigned i = 0; i < input_vecs.array[1].vec.size(); i ++)
+				{
+					Point* test_point = new Point(dimensions);
+
+					test_point->set(0 , i);
+					test_point->set(1, input_vecs.array[1].vec[i]);
+
+					test_curve2->push_back(*test_point);
+					
+					cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+				}
+
+				Frechet::Discrete::Distance discrete_distance =  Frechet::Discrete::distance(*test_curve1, *test_curve2);
+
+				cout << "Discrete Frechet Distance between 2 test curves : " << discrete_distance.value << endl;
+
+				// Point* test_point1 = new Point(dimensions);
+
+				// test_point1->set(0 , 0);
+				// test_point1->set(1, input_vecs.array[0].vec[0]);
+
+				// Point* test_point2 = new Point(dimensions);
+
+				// test_point2->set(0 , 0);
+				// test_point2->set(1, input_vecs.array[0].vec[1]);
+
+				// cout << "Test points created with dimensions : " << test_point1->dimensions() << endl;
+				// cout << "And coordinates :" << endl;
+				// cout << "X1 : " << test_point1->get(0) << " Y1 : " << test_point1->get(1) << endl;
+				// cout << "X2 : " << test_point2->get(0) << " Y2 : " << test_point2->get(1) << endl;
 			}
 			else if (args.metric == "continuous")
 			{
