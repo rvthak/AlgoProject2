@@ -219,7 +219,8 @@ distance_t _projective_lower_bound(const Curve &curve1, const Curve &curve2) {
                 distances1_sqr[j] = curve1[i].dist_sqr(curve2[j]);
             }
         }
-        distances2_sqr[i] = *std::min_element(distances1_sqr.begin(), distances1_sqr.end());
+        distances2_sqr[i] = *std::min(distances1_sqr.begin(), distances1_sqr.end());
+        // distances2_sqr[i] = *std::min_element(distances1_sqr.begin(), distances1_sqr.end());
     }
     
     distances1_sqr = std::vector<distance_t>(curve1.complexity() - 1);
@@ -233,12 +234,14 @@ distance_t _projective_lower_bound(const Curve &curve1, const Curve &curve2) {
                 distances1_sqr[j] = curve2[i].dist_sqr(curve1[j]);
             }
         }
-        distances2_sqr[curve1.complexity() + i] = *std::min_element(distances1_sqr.begin(), distances1_sqr.end());
+        distances2_sqr[curve1.complexity() + i] = *std::min(distances1_sqr.begin(), distances1_sqr.end());
+        // distances2_sqr[curve1.complexity() + i] = *std::min_element(distances1_sqr.begin(), distances1_sqr.end());
     }
     
     distances2_sqr[curve1.complexity() + curve2.complexity()] = curve1[0].dist_sqr(curve2[0]);
     distances2_sqr[curve1.complexity() + curve2.complexity() + 1] = curve1[curve1.complexity()-1].dist_sqr(curve2[curve2.complexity()-1]);
-    return std::sqrt(*std::max_element(distances2_sqr.begin(), distances2_sqr.end()));
+    return std::sqrt(*std::max(distances2_sqr.begin(), distances2_sqr.end()));
+    // return std::sqrt(*std::max_element(distances2_sqr.begin(), distances2_sqr.end()));
 }
 
 } // end namespace Continuous
