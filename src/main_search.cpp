@@ -86,13 +86,27 @@ int main(int argc, char *argv[]){
 
 			if (args.metric == "discrete")
 			{
-				
+				int dimensions = 2;
+
+				Point* test_point1 = new Point(dimensions);
+
+				test_point1->set(0 , 0);
+				test_point1->set(1, input_vecs.array[0].vec[0]);
+
+				Point* test_point2 = new Point(dimensions);
+
+				test_point2->set(0 , 0);
+				test_point2->set(1, input_vecs.array[0].vec[1]);
+
+				cout << "Test points created with dimensions : " << test_point1->dimensions() << endl;
+				cout << "And coordinates :" << endl;
+				cout << "X1 : " << test_point1->get(0) << " Y1 : " << test_point1->get(1) << endl;
+				cout << "X2 : " << test_point2->get(0) << " Y2 : " << test_point2->get(1) << endl;
 			}
 			else if (args.metric == "continuous")
 			{
 				
 			}
-
 
 
 			return 0;
