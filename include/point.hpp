@@ -144,7 +144,8 @@ public:
     }
     
     inline distance_t line_segment_dist_sqr(const Point &p1, const Point &p2) const {
-        const Vector u = p2 - p1;
+        const Vector_F u = p2 - p1;  // CHRIS CHANGE
+        // const Vector u = p2 - p1;
         parameter_t projection_param = (*this - p1) * u / (u * u);
         if (projection_param < parameter_t(0)) projection_param = parameter_t(0);
         else if (projection_param > parameter_t(1)) projection_param = parameter_t(1);
@@ -157,7 +158,8 @@ public:
     }
     
     inline Interval ball_intersection_interval(const distance_t distance_sqr, const Point &line_start, const Point &line_end) const {
-        const Vector u = line_end-line_start, v = *this - line_start;
+        const Vector_F u = line_end-line_start, v = *this - line_start;  // CHRIS CHANGE
+        // const Vector u = line_end-line_start, v = *this - line_start;
         const parameter_t ulen_sqr = u.length_sqr(), vlen_sqr = v.length_sqr();
         
         if (near_eq(ulen_sqr, parameter_t(0))) {

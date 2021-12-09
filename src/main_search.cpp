@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+
 #include "Args.h"
 #include "timer.h"
 #include "utils.h"
@@ -7,6 +8,10 @@
 #include "shortedList.h"
 #include "hash_lsh.h"
 #include "hash_cube.h"
+
+#include "point.hpp"
+#include "curve.hpp"
+#include "frechet.hpp"
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -70,29 +75,32 @@ int main(int argc, char *argv[]){
 			cube->set_search_limits(args.probes, args.M, args.k);
 			cube->loadVectors(&input_vecs);
 		}
-		else{ // Frechet
+		else if (args.algorithm == "Frechet")
+		{ 
+			// CHRIS 09.12.2021 FRED INTEGRATION START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
+
+			cout << "Starting to integrate Fred" << endl;
+			cout << "Header files included!" << endl;
 
 			// CHRIS 07.12.2021 START
 
 			if (args.metric == "discrete")
 			{
-				cout << "Going to initialize LSH struct!" << endl;
-
-				lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
-				lsh->loadVectors(&input_vecs);
-
-				cout << "Initialized LSH struct!" << endl;
+				
 			}
 			else if (args.metric == "continuous")
 			{
-				lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
-				lsh->loadVectors(&input_vecs);
+				
 			}
 
-			// CHRIS 07.12.2021 END
 
-			std::cout << " Frechet still under construction " << std::endl;
-			return 1;
+
+			return 0;
+			
+			// CHRIS 07.12.2021 END
+			// std::cout << " Frechet still under construction " << std::endl;
+
+			// CHRIS 09.12.2021 FRED INTEGRATION END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 		}
 		print_structs_created(t.toc());
 
