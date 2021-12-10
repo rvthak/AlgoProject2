@@ -100,7 +100,7 @@ int main(int argc, char *argv[]){
 
 					test_curve1->push_back(*test_point);
 					
-					cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+					// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
 				}
 
 				for (unsigned i = 0; i < input_vecs.array[1].vec.size(); i ++)
@@ -112,12 +112,12 @@ int main(int argc, char *argv[]){
 
 					test_curve2->push_back(*test_point);
 					
-					cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+					// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
 				}
 
 				Frechet::Discrete::Distance discrete_distance =  Frechet::Discrete::distance(*test_curve1, *test_curve2);
 
-				cout << "Discrete Frechet Distance between 2 test curves : " << discrete_distance.value << endl;
+				// cout << "Discrete Frechet Distance between 2 test curves : " << discrete_distance.value << endl;
 
 				// Point* test_point1 = new Point(dimensions);
 
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
 			}
 
 
-			return 0;
+			// return 0;
 			
 			// CHRIS 07.12.2021 END
 			// std::cout << " Frechet still under construction " << std::endl;
@@ -173,11 +173,46 @@ int main(int argc, char *argv[]){
 			{
 				if (args.metric == "discrete")
 				{
+					// CHRIS 09.12.2021 FRED INTEGRATION START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
+
 					timer.tic();
+
+					Curve* input_curve = new Curve(2, "input_curve");
+					Curve* query_curve = new Curve(2, "query_curve");
+
+					for (unsigned j = 0; j < input_vecs.array[0].vec.size(); i ++)
+					{
+						Point* input_point = new Point(2);
+
+						input_point->set(0 , i);
+						input_point->set(1, input_vecs.array[0].vec[i]);
+
+						input_curve->push_back(*input_point);
+					}
+
+					for (unsigned i = 0; i < q->vec.size(); i ++)
+					{
+						Point* query_point = new Point(2);
+
+						query_point->set(0 , i);
+						query_point->set(1, q->vec[i]);
+
+						query_curve->push_back(*query_point);
+					}
+
+					Frechet::Discrete::Distance discrete_distance_fred =  Frechet::Discrete::distance(*input_curve, *query_curve);
+					double discrete_distance_chris =  input_vecs.array[0].discrete_frechet_distance(q);
+
+					cout << "Distance Fred : " << discrete_distance_fred.value << endl;
+					cout << "Distance Chris : " << discrete_distance_chris << endl;
+
 
 					// approx_results = lsh->kNN_lsh_discrete_frechet(q , 1);
 
 					approx_time = timer.toc();
+
+					// CHRIS 09.12.2021 FRED INTEGRATION END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
+
 				}
 				else if (args.metric == "continuous")
 				{
