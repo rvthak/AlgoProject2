@@ -86,36 +86,36 @@ int main(int argc, char *argv[]){
 
 			if (args.metric == "discrete")
 			{
-				int dimensions = 2;
+				// int dimensions = 2;
 
-				Curve* test_curve1 = new Curve(dimensions, "test_curve1");
-				Curve* test_curve2 = new Curve(dimensions, "test_curve2");
+				// Curve* test_curve1 = new Curve(dimensions, "test_curve1");
+				// Curve* test_curve2 = new Curve(dimensions, "test_curve2");
 
-				for (unsigned i = 0; i < input_vecs.array[0].vec.size(); i ++)
-				{
-					Point* test_point = new Point(dimensions);
+				// for (unsigned i = 0; i < input_vecs.array[0].vec.size(); i ++)
+				// {
+				// 	Point* test_point = new Point(dimensions);
 
-					test_point->set(0 , i);
-					test_point->set(1, input_vecs.array[0].vec[i]);
+				// 	test_point->set(0 , i);
+				// 	test_point->set(1, input_vecs.array[0].vec[i]);
 
-					test_curve1->push_back(*test_point);
+				// 	test_curve1->push_back(*test_point);
 					
-					// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
-				}
+				// 	// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+				// }
 
-				for (unsigned i = 0; i < input_vecs.array[1].vec.size(); i ++)
-				{
-					Point* test_point = new Point(dimensions);
+				// for (unsigned i = 0; i < input_vecs.array[1].vec.size(); i ++)
+				// {
+				// 	Point* test_point = new Point(dimensions);
 
-					test_point->set(0 , i);
-					test_point->set(1, input_vecs.array[1].vec[i]);
+				// 	test_point->set(0 , i);
+				// 	test_point->set(1, input_vecs.array[1].vec[i]);
 
-					test_curve2->push_back(*test_point);
+				// 	test_curve2->push_back(*test_point);
 					
-					// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
-				}
+				// 	// cout << "X : " << test_point->get(0) << " Y : " << test_point->get(1) << endl;
+				// }
 
-				Frechet::Discrete::Distance discrete_distance =  Frechet::Discrete::distance(*test_curve1, *test_curve2);
+				// Frechet::Discrete::Distance discrete_distance =  Frechet::Discrete::distance(*test_curve1, *test_curve2);
 
 				// cout << "Discrete Frechet Distance between 2 test curves : " << discrete_distance.value << endl;
 
@@ -177,10 +177,14 @@ int main(int argc, char *argv[]){
 
 					timer.tic();
 
+					cout << "Going to initialize curves" << endl;
+
 					Curve* input_curve = new Curve(2, "input_curve");
 					Curve* query_curve = new Curve(2, "query_curve");
 
-					for (unsigned j = 0; j < input_vecs.array[0].vec.size(); i ++)
+					cout << "Initialized curves" << endl;
+
+					for (unsigned j = 0; j < input_vecs.array[0].vec.size(); j++)
 					{
 						Point* input_point = new Point(2);
 
@@ -190,7 +194,7 @@ int main(int argc, char *argv[]){
 						input_curve->push_back(*input_point);
 					}
 
-					for (unsigned i = 0; i < q->vec.size(); i ++)
+					for (unsigned i = 0; i < q->vec.size(); i++)
 					{
 						Point* query_point = new Point(2);
 
@@ -200,8 +204,10 @@ int main(int argc, char *argv[]){
 						query_curve->push_back(*query_point);
 					}
 
+					cout << "Loaded points in curves" << endl;
+
 					Frechet::Discrete::Distance discrete_distance_fred =  Frechet::Discrete::distance(*input_curve, *query_curve);
-					double discrete_distance_chris =  input_vecs.array[0].discrete_frechet_distance(q);
+					double discrete_distance_chris =  q->discrete_frechet_distance(&input_vecs.array[0]);
 
 					cout << "Distance Fred : " << discrete_distance_fred.value << endl;
 					cout << "Distance Chris : " << discrete_distance_chris << endl;
@@ -232,6 +238,7 @@ int main(int argc, char *argv[]){
 			// CHRIS 07.12.2021 END
 
 			// Write a report on the output file
+			cout << "Going to write results" << endl;
 			report_results(args.output_file, q->name, args.algorithm, args.notTrue, approx_results, approx_time, true_results, true_time);
 
 			// Results written in output file => Free the memory
