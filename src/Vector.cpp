@@ -43,7 +43,7 @@ double Vector::discrete_frechet_distance(Vector *p)
 	double** c = new double*[length_q];
     double** distances = new double*[length_q];
 
-    for (unsigned i = 0; i < length_q; i++)
+    for (unsigned i = 0; i <= length_q; i++)
     {
 		c[i] = new double[length_p];
         distances[i] = new double[length_p];
@@ -61,7 +61,7 @@ double Vector::discrete_frechet_distance(Vector *p)
 
 	// Intitialize the fisrt rows of each vector
 
-	for (unsigned i = 1; i < length_q; i++)
+	for (unsigned i = 1; i <= length_q; i++)
 	{
 		double xi_q = i;
 		double yi_q = q->vec[i];
@@ -69,7 +69,7 @@ double Vector::discrete_frechet_distance(Vector *p)
 		c[0][i] = euclidian_distance(x0_p, y0_p, xi_q, yi_q);
 	}
 
-	for (unsigned j = 1; j < length_p; j++)
+	for (unsigned j = 1; j <= length_p; j++)
 	{
 		double xj_p = j;
 		double yj_p = p->vec[j];
@@ -77,9 +77,9 @@ double Vector::discrete_frechet_distance(Vector *p)
 		c[j][0] = euclidian_distance(xj_p, yj_p, x0_q, y0_q);
 	}
 
-    for (unsigned i = 1; i < length_p; ++i)
+    for (unsigned i = 1; i <= length_p; ++i)
     {
-        for (unsigned j = 1; j < length_q; ++j)
+        for (unsigned j = 1; j <= length_q; ++j)
         {
 			double x_i = i;
 			double y_i = p->vec[i];
@@ -93,20 +93,49 @@ double Vector::discrete_frechet_distance(Vector *p)
         }
     }
 
-	for (unsigned i = 1; i < length_p; i++)
+	for (unsigned i = 1; i <= length_p; i++)
     {
-        for (unsigned j = 1; j < length_q; j++)
+        for (unsigned j = 1; j <= length_q; j++)
         {
 			c[i][j] = max(min({c[i - 1][j], c[i - 1][j - 1], c[i][j - 1]}), distances[i][j]);
 			
 			// if ((i == 119 && j == 119) || (i == 118 && j == 118) || (i == 117 && j == 117) || (i == 116 && j == 116) || (i == 115 && j == 115)) 
 			
-			// if ((i == 119) || (j == 119))
+			if (c[i][j] >= 120.400 && c[i][j] <= 120.700)
+			{
+				cout << "=============================================" << endl;
+				cout << "Found correct value!" << endl;
+				cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+				cout << "=============================================" << endl;
+			} 
+
+			// if ((i >= 115) || (j >= 115))
 			// 	cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 		}
 	}
 
-	double distance = c[length_p - 1][length_q - 1];
+	// cout << endl << "--------------------------------------------------------" << endl;
+
+	// for (unsigned i = 115; i <= length_p; i++)
+	// {
+	// 	cout << " | " << i;  
+	// }
+
+	// cout << endl;
+
+	// for (unsigned i = 115; i <= length_p; i++)
+	// {
+	// 	for (unsigned j = 115; j <= length_q; j++)
+	// 	{
+	// 		cout << j << " | " << c[i][j];
+	// 	}
+
+	// 	cout << endl;  
+	// }
+
+	// cout << endl << "--------------------------------------------------------" << endl;
+
+	double distance = c[length_p][length_q];
 	
     return distance;
 }
