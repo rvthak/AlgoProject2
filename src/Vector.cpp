@@ -41,12 +41,10 @@ double Vector::discrete_frechet_distance(Vector *p)
     unsigned length_q = (q->vec.size());
 
 	double** c = new double*[length_q];
-    // double** distances = new double*[length_q];
 
     for (unsigned i = 0; i < length_q; i++)
     {
 		c[i] = new double[length_p];
-        // distances[i] = new double[length_p];
     }
 
 	// Initialize the c[0][0] element. Just the distance between the fisrt points of the curves
@@ -77,22 +75,6 @@ double Vector::discrete_frechet_distance(Vector *p)
 		c[j][0] = euclidian_distance(xj_p, yj_p, x0_q, y0_q);
 	}
 
-    // for (unsigned i = 1; i <= length_p; ++i)
-    // {
-    //     for (unsigned j = 1; j <= length_q; ++j)
-    //     {
-	// 		double x_i = i;
-	// 		double y_i = p->vec[i];
-
-	// 		double x_j = j;
-	// 		double y_j = q->vec[j];
-
-    //         distances[i][j] = euclidian_distance(x_i, y_i, x_j, y_j);
-
-	// 		// cout << "distances[" << i << "][" << j << "] : " << distances[i][j] << endl;
-    //     }
-    // }
-
 	for (unsigned i = 1; i < length_p; i++)
     {
         for (unsigned j = 1; j < length_q; j++)
@@ -107,10 +89,6 @@ double Vector::discrete_frechet_distance(Vector *p)
 
 			c[i][j] = max(min({c[i - 1][j], c[i - 1][j - 1], c[i][j - 1]}), distance);
 
-			// c[i][j] = max(min({c[i - 1][j], c[i - 1][j - 1], c[i][j - 1]}), distances[i][j]);
-			
-			// if ((i == 119 && j == 119) || (i == 118 && j == 118) || (i == 117 && j == 117) || (i == 116 && j == 116) || (i == 115 && j == 115)) 
-			
 			if (c[i][j] >= 120.300 && c[i][j] <= 120.700)
 			{
 				cout << "=============================================" << endl;
@@ -118,32 +96,8 @@ double Vector::discrete_frechet_distance(Vector *p)
 				cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 				cout << "=============================================" << endl;
 			} 
-
-			// if ((i >= 115) || (j >= 115))
-			// 	cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
 		}
 	}
-
-	// cout << endl << "--------------------------------------------------------" << endl;
-
-	// for (unsigned i = 115; i <= length_p; i++)
-	// {
-	// 	cout << " | " << i;  
-	// }
-
-	// cout << endl;
-
-	// for (unsigned i = 115; i <= length_p; i++)
-	// {
-	// 	for (unsigned j = 115; j <= length_q; j++)
-	// 	{
-	// 		cout << j << " | " << c[i][j];
-	// 	}
-
-	// 	cout << endl;  
-	// }
-
-	// cout << endl << "--------------------------------------------------------" << endl;
 
 	double distance = c[length_p - 1][length_q - 1];
 	
