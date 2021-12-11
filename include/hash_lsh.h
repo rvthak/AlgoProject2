@@ -40,6 +40,7 @@ struct MultiHash{
 	double averageBucketSize();
 
 	ShortedList *kNN_lsh(Vector *query, unsigned k);
+	ShortedList *kNN_lsh_discrete_frechet(Vector *query, unsigned k);  // CHRIS 07.12.2021
 	List *range_search(Vector *query, double R);
 };
 

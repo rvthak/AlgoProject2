@@ -33,6 +33,114 @@ double Vector::l2(Vector *p){
 	return sqrt(sum);
 }
 
+double Vector::discrete_frechet_distance(Vector *p)
+{
+    Vector* q = this;
+
+	unsigned length_p = (p->vec.size());
+    unsigned length_q = (q->vec.size());
+
+	double** c = new double*[length_q];
+
+    for (unsigned i = 0; i < length_q; i++)
+    {
+		c[i] = new double[length_p];
+    }
+
+	// Initialize the c[0][0] element. Just the distance between the fisrt points of the curves
+	
+	double x0_p = 0;
+	double y0_p = p->vec[0];
+
+	double x0_q = 0;
+	double y0_q = q->vec[0];
+
+	c[0][0] = euclidian_distance(x0_p, y0_p, x0_q, y0_q);
+
+	// Intitialize the fisrt rows of each vector
+
+	for (unsigned i = 1; i < length_q; i++)
+	{
+		double xi_q = i;
+		double yi_q = q->vec[i];
+
+		c[0][i] = euclidian_distance(x0_p, y0_p, xi_q, yi_q);
+	}
+
+	for (unsigned j = 1; j < length_p; j++)
+	{
+		double xj_p = j;
+		double yj_p = p->vec[j];
+
+		c[j][0] = euclidian_distance(xj_p, yj_p, x0_q, y0_q);
+	}
+
+	for (unsigned i = 1; i < length_p; i++)
+    {
+        for (unsigned j = 1; j < length_q; j++)
+        {
+			double x_i = i;
+			double y_i = p->vec[i];
+
+			double x_j = j;
+			double y_j = q->vec[j];
+
+            double distance = euclidian_distance(x_i, y_i, x_j, y_j);
+
+			c[i][j] = max(min({c[i - 1][j], c[i - 1][j - 1], c[i][j - 1]}), distance);
+
+			if (c[i][j] >= 120.300 && c[i][j] <= 120.700)
+			{
+				cout << "=============================================" << endl;
+				cout << "Found correct value!" << endl;
+				cout << "c[" << i << "][" << j << "] : " << c[i][j] << endl;
+				cout << "=============================================" << endl;
+			} 
+		}
+	}
+
+	double distance = c[length_p - 1][length_q - 1];
+	
+    return distance;
+}
+
+
+Vector* Vector::filter_vector(unsigned e)
+{
+    Vector* filtered_vector = new Vector();
+    filtered_vector->id = this->id;
+
+    unsigned current_vector_length = this->vec.size();
+
+    for (unsigned i = 0; i < current_vector_length; i++)
+    {
+        unsigned index_a = i;
+        unsigned index_b = i + 1;
+        unsigned index_c = i + 2;
+
+        if (index_a > current_vector_length && index_b > current_vector_length && index_c > current_vector_length)
+            return filtered_vector;
+
+        int a = this->vec[index_a];
+        int b = this->vec[index_b];
+        int c = this->vec[index_c];
+
+        if (abs(a - b) <= e && abs(b - c) <= e)
+        {
+            filtered_vector->vec.push_back(a);
+            filtered_vector->vec.push_back(c);
+        }
+        else
+        {
+            filtered_vector->vec.push_back(a);
+            filtered_vector->vec.push_back(b);
+            filtered_vector->vec.push_back(c);
+        }
+    }
+
+    return filtered_vector;
+}
+
 //------------------------------------------------------------------------------------------------------------------
 
 VectorArray::VectorArray(unsigned size){

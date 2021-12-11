@@ -256,3 +256,12 @@ bool positive_less_than(double x, double y){
 	if(x<y){ return true; }
 	return false;
 }
+
+// CHRIS 07.12.2021 START
+
+double euclidian_distance(double x1, double y1, double x2, double y2)
+{
+    return (double) sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) * 1.0);
+}
+
+// CHRIS 07.12.2021 END

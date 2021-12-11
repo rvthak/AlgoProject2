@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
 
 unsigned getFileLines(std::string name);
 unsigned getFileLineLength(std::string name);
@@ -39,5 +40,11 @@ double sum_vector_elems(std::vector<double> *v);
 bool index_exists(unsigned index, std::vector<unsigned> *v);
 
 bool positive_less_than(double x, double y);
+
+// CHRIS 07.12.2021 START
+
+double euclidian_distance(double x1, double y1, double x2, double y2);
+
+// CHRIS 07.12.2021 END
 
 #endif

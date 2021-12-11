@@ -17,6 +17,8 @@ struct Vector{
 
 	void print();			// Print the Vector Contents
 	double l2(Vector *p);	// Returns the l2 norm between the two vectors
+    double discrete_frechet_distance(Vector *p);	// Returns the discrete frechet distance between the two vectors
+    Vector* filter_vector(unsigned e);   // Method to filter time-series vector
 };
 
 // Array Struct Used to parse and store Vectors
