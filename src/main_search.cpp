@@ -1,6 +1,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <CUnit/CUnit.h>
+
 #include "Args.h"
 #include "timer.h"
 #include "utils.h"
