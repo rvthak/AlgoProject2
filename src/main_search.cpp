@@ -7,6 +7,7 @@
 #include "shortedList.h"
 #include "hash_lsh.h"
 #include "hash_cube.h"
+#include "GridHash.h"
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ void report_results(std::string filename, std::string id, std::string algo, bool
                     ShortedList *true_r, double true_time);
 
 void clear_results(ShortedList **approx_res, ShortedList **true_res);
-void garbage_collector(MultiHash *lsh, Hypercube *cube);
+void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid);
 
 //------------------------------------------------------------------------------------------------------------------
 
@@ -55,11 +56,12 @@ int main(int argc, char *argv[]){
 		// Load both the input and query file data
 		VectorArray input_vecs(args.input_file);
 		VectorArray query_vecs(args.query_file);
-		//input_vecs.print();
+		//query_vecs.print();
 
 		// Build the user-selected Data structures
-		MultiHash *lsh = nullptr;
+		MultiHash *lsh  = nullptr;
 		Hypercube *cube = nullptr;
+		GridHash  *grid = nullptr;
 
 		if( args.algorithm == "LSH" ){
 			lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
@@ -71,8 +73,12 @@ int main(int argc, char *argv[]){
 			cube->loadVectors(&input_vecs);
 		}
 		else{ // Frechet
-			std::cout << " Frechet still under construction " << std::endl;
-			return 1;
+			unsigned dim; // The projection dimention
+			if( args.metric == "discrete"){ dim=2; }
+			else { dim=1; }
+
+			grid = new GridHash(args.delta, args.L, dim, args.k, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);
+			grid->loadVectors(&input_vecs);
 		}
 		print_structs_created(t.toc());
 
@@ -87,9 +93,16 @@ int main(int argc, char *argv[]){
 			// Run and time the tests
 			if( args.algorithm == "LSH" ){
 				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
-			} else if( args.algorithm == "Hypercube" ){
+			} 
+			else if( args.algorithm == "Hypercube" ){
 				timer.tic(); cube->search_hypercube(q);
 				approx_results = cube->k_nearest_neighbors_search(1); approx_time = timer.toc();
+			} 
+			else if( (args.algorithm == "Frechet") && (args.metric == "discrete") ){
+				timer.tic();  approx_results = grid->disc_NN_lsh(q); approx_time = timer.toc();
+			}
+			else{ // Continuous Frechet
+				timer.tic();  approx_results = grid->cont_NN_lsh(q); approx_time = timer.toc();
 			}
 
 			if( args.notTrue == false ){
@@ -111,7 +124,7 @@ int main(int argc, char *argv[]){
 		//------------------------------------------------------------------------------------------------------------------
 
 		// Garbage Collection
-		garbage_collector(lsh, cube);
+		garbage_collector(lsh, cube, grid);
 
 		// Clear the old args and reset the stats
 		args.clear(); reset_stats();
@@ -125,9 +138,10 @@ int main(int argc, char *argv[]){
 
 //------------------------------------------------------------------------------------------------------------------
 
-void garbage_collector(MultiHash *lsh, Hypercube *cube){
+void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid){
 	if( lsh  != nullptr ){ delete lsh;  }
 	if( cube != nullptr ){ delete cube; }
+	if( grid != nullptr ){ delete grid; }
 }
 
 void clear_results(ShortedList **approx_res, ShortedList **true_res){
