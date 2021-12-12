@@ -42,6 +42,9 @@ double Vector::l2(Vector *p){
 // Returns the discrete frechet distance between the two vectors
 double Vector::discrete_frechet_distance(Vector *p){
 
+
+
+
 	return 0;
 }
 
@@ -54,7 +57,7 @@ double Vector::continuous_frechet_distance(Vector *p){
 	Curve *v2 = p->create_Curve();
 
 	// Get their continuous frechet distance
-	Frechet::Discrete::Distance fre_dist = Frechet::Continuous::distance(*v1, *v2);
+	Frechet::Continuous::Distance fre_dist = Frechet::Continuous::distance(*v1, *v2);
 
 	// Clean up
 	delete v1; delete v2;
@@ -72,9 +75,9 @@ Curve* Vector::create_Curve(){
 	Point p(2);
 
 	// Write all the data of the given Vector to 'c'
-	for(unsigned i=0; i<(v->size()); i++){
-		p->set(0, i);
-		p->set(1, (q->vec)[i]);
+	for(unsigned i=0; i<(this->size()); i++){
+		p.set(0, i);
+		p.set(1, (this->vec)[i]);
 		c->push_back(p);
 	}
 	return c;
