@@ -7,6 +7,9 @@ using namespace std;
 // A Large prime + a decimal part - just because I like primes
 #define PADDING_NUM 1000003.700171
 
+// A small constant used as the limit for filtering
+#define E_CONSTANT 0.1
+
 // Convert the given Vector to a VCurve
 // Uses sampling rate = 1 unit of time
 VCurve::VCurve(Vector *v){
@@ -34,7 +37,31 @@ Vector *VCurve::vectorize(){
 
 // Filter-out consecutive points that show very little volatility
 void VCurve::filter(){
+	// The filtered vectors
+	vector<double> x, y;
 
+	// Add the first point - edge case
+	x.push_back( (this->x)[0] );
+	y.push_back( (this->y)[0] );
+
+	// Iterate through the VCurve triplets and filter-out any insignificant values
+	for(unsigned i=1; i<((this->size())-1); i++){
+
+		if( abs( (this->y)[i-1] - (this->y)[i] ) <= E_CONSTANT ||
+		    abs( (this->y)[i+1] - (this->y)[i] ) <= E_CONSTANT ){
+			continue;
+		}
+		x.push_back( (this->x)[i] );
+		y.push_back( (this->y)[i] );
+	}
+
+	// Add the last point - edge case
+	x.push_back( (this->x)[(this->size())-1] );
+	y.push_back( (this->y)[(this->size())-1] );
+
+	// Write the new vectors on the VCurve
+	this->x = x;
+	this->y = y;
 }
 
 // Filter-out non-important points, keep only local minima and maxima
