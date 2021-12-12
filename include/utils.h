@@ -9,6 +9,10 @@ unsigned getFileLineLength(std::string name);
 bool fileExists(std::string name);
 
 double max(double x, double y);
+double min(double x, double y);
+bool belongs(double x, double start, double end);
+
+double snap(double q, double delta, double t);
 
 unsigned mod(unsigned x, unsigned y);
 void clearContents(std::string filename);

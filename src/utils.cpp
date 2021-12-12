@@ -79,6 +79,23 @@ double max(double x, double y){
 	return y;
 }
 
+double min(double x, double y){
+	if( x > y ){ return y; }
+	return x;
+}
+
+// Return true if the given number 'x' is between 'start' and 'end' (Including them)
+bool belongs(double x, double start, double end){
+	if( (x >= start) && (x <= end) ){ return true; }
+	return false;
+}
+
+// Snap the given number 'q' to the closest grid point
+// Grid is defined by delta and t values
+double snap(double q, double delta, double t){
+	return (floor( (q-t)/delta + 0.5 )*delta + t);
+}
+
 // Modulo : Always positive
 unsigned mod(unsigned x, unsigned y){
 	if( x<0 ){ x*=(-1); }
