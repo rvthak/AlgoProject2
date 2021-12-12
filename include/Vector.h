@@ -6,6 +6,8 @@
 #include <string>
 #include <iterator>
 
+#include "curve.hpp"
+
 // Vector Representation Struct
 struct Vector{
 	unsigned id;			// The Vector's Id
@@ -18,6 +20,7 @@ struct Vector{
 	void print();			// Print the Vector Contents
 	unsigned size();		// Returns the size of the Vector
 	double l2(Vector *p);	// Returns the l2 norm between the two vectors
+	Curve* create_Curve();	// Create a Curve representation of the given Vector
 
 	double discrete_frechet_distance(Vector *p);	// Returns the discrete frechet distance between the two vectors
 	double continuous_frechet_distance(Vector *p);	// Returns the continuous frechet distance between the two vectors

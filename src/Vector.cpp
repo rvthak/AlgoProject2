@@ -9,9 +9,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "point.hpp"
-#include "curve.hpp"
 #include "frechet.hpp"
+#include "point.hpp"
 
 using namespace std;
 
@@ -50,7 +49,35 @@ double Vector::discrete_frechet_distance(Vector *p){
 // Uses Fred library
 double Vector::continuous_frechet_distance(Vector *p){
 
-	return 0;
+	// Get a Curve representation of each Vector
+	Curve *v1 = this->create_Curve();
+	Curve *v2 = p->create_Curve();
+
+	// Get their continuous frechet distance
+	Frechet::Discrete::Distance fre_dist = Frechet::Continuous::distance(*v1, *v2);
+
+	// Clean up
+	delete v1; delete v2;
+
+	return fre_dist.value;
+}
+
+// Create a Curve representation of the given Vector
+// Remember to free the returned curve after
+Curve* Vector::create_Curve(){
+	// Create an empty curve with 2 dimentions
+	Curve* c = new Curve(2);
+
+	// Create a 2D Point - Used to push Vector pairs into 'c'
+	Point p(2);
+
+	// Write all the data of the given Vector to 'c'
+	for(unsigned i=0; i<(v->size()); i++){
+		p->set(0, i);
+		p->set(1, (q->vec)[i]);
+		c->push_back(p);
+	}
+	return c;
 }
 
 //------------------------------------------------------------------------------------------------------------------
