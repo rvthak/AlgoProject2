@@ -9,9 +9,13 @@
 #include <iostream>
 #include <algorithm>
 
+#include "point.hpp"
+#include "curve.hpp"
+#include "frechet.hpp"
+
 using namespace std;
 
-Vector::Vector(){ this->id = 0; this->centroid = nullptr; }
+Vector::Vector(){ this->id = 0; this->centroid = nullptr; this->name = ""; }
 
 // Prints all the data stored in a Vector
 void Vector::print(){
@@ -20,6 +24,9 @@ void Vector::print(){
 		cout << val << ' ';
 	} cout << endl;
 }
+
+// Return the size of the Vector
+unsigned Vector::size(){ return this->vec.size(); }
 
 // Calculate the norm between "this" and p
 double Vector::l2(Vector *p){
@@ -31,6 +38,19 @@ double Vector::l2(Vector *p){
 		sum += tmp * tmp;
 	}
 	return sqrt(sum);
+}
+
+// Returns the discrete frechet distance between the two vectors
+double Vector::discrete_frechet_distance(Vector *p){
+
+	return 0;
+}
+
+// Returns the continuous frechet distance between the two vectors
+// Uses Fred library
+double Vector::continuous_frechet_distance(Vector *p){
+
+	return 0;
 }
 
 //------------------------------------------------------------------------------------------------------------------
