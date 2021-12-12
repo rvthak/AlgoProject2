@@ -20,6 +20,7 @@ struct HashTable{
 	~HashTable();
 
 	int add(Vector *vec);
+	int add(Vector *vec, Vector *key);
 
 	void preview();
 	double averageBucketSize();
@@ -34,6 +35,8 @@ struct MultiHash{
 	~MultiHash();
 
 	void add(Vector *vec);
+	void add(Vector *vec, Vector *key);
+	
 	void loadVectors(VectorArray *arr);
 	void loadVectors(AssignmentArray *arr);
 	void print();

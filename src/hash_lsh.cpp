@@ -36,6 +36,14 @@ int HashTable::add(Vector *vec){
 	return (this->bucs)[key].add(vec, id);
 }
 
+// Add the given Vector to "this" Hash Tablebut use 'key' foe hashing instead of vec
+int HashTable::add(Vector *vec, Vector *key){
+	unsigned long id = this->g->ID(key);
+	unsigned long index = mod(id, g->tableSize);
+	//std::cout << " KEY: " << key << ", ID: " << id << std::endl;
+	return (this->bucs)[index].add(vec, id);
+}
+
 // Print only the buckets + the amount of Vectors stored on each one
 void HashTable::preview(){
 	for(unsigned i=0; i<(this->size); i++){
@@ -82,6 +90,16 @@ MultiHash::~MultiHash(){
 void MultiHash::add(Vector *vec){
 	for(unsigned i=0; i<this->amount; i++){
 		if( ((this->array)[i])->add(vec) ){
+			std::cout << "\033[31;1m (!) Fatal Error:\033[0m Hash Table Built : Failed to add Vector to Hash Table." << std::endl;
+			exit(1);
+		}
+	}
+}
+
+// Add the given Vector on every Hash Table but use 'key' foe hashing instead of vec
+void MultiHash::add(Vector *vec, Vector *key){
+	for(unsigned i=0; i<this->amount; i++){
+		if( ((this->array)[i])->add(vec, key) ){
 			std::cout << "\033[31;1m (!) Fatal Error:\033[0m Hash Table Built : Failed to add Vector to Hash Table." << std::endl;
 			exit(1);
 		}
