@@ -14,6 +14,12 @@ unsigned uniform_distribution(unsigned lo, unsigned hi){
 	return (unsigned)(d(gen));
 }
 
+// Return a real number following uniform distribution in the given number range 
+double uniform_distribution_real(double lo, double hi){
+	std::uniform_real_distribution<> d(lo, hi);
+	return d(gen);
+}
+
 // Return a number following normal distribution with the given mean and variance
 double normal_distribution(int mean, int variance){
 	std::normal_distribution<double> d(mean, variance);
