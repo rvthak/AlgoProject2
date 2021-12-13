@@ -1,7 +1,10 @@
 #include <fstream>
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 
 #include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
 
 #include "Args.h"
 #include "timer.h"
@@ -15,11 +18,26 @@
 #include "curve.hpp"
 #include "frechet.hpp"
 
+#define MAX_DISTANCE_OFFSET 200.0  // CHRIS 13.12.2021 START
+
 //------------------------------------------------------------------------------------------------------------------
 
 double approx_time_sum=0, true_time_sum=0;
 double MAF = 0; // Max Approximation Factor
 unsigned count=0;
+
+// CHRIS 13.12.2021 START
+
+FILE* test_suite_results = NULL; 
+
+double distance_fred_tmp = 0.0;
+double distance_chris_tmp = 0.0;
+
+int init_distance_suite();
+int clean_distance_suite();
+void test_discrete_distance_results();
+
+// CHRIS 13.12.2021 END
 
 void reset_stats();
 void report_statistics(std::string filename, bool ignoreTrue, double total_time);
@@ -32,7 +50,28 @@ void garbage_collector(MultiHash *lsh, Hypercube *cube);
 
 //------------------------------------------------------------------------------------------------------------------
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
+	// CHRIS 13.12.2021 START
+
+	// Initialize Unit Tests
+
+	CU_pSuite pSuite = NULL;
+
+	if (CU_initialize_registry() != CUE_SUCCESS)
+		return CU_get_error();
+
+	
+	pSuite = CU_add_suite("Distance_Suite", init_distance_suite, clean_distance_suite);
+   	
+	if (NULL == pSuite) 
+	{
+      CU_cleanup_registry();
+      return CU_get_error();
+    } 
+
+	// CHRIS 13.12.2021 END
+
 	bool running = true;
 	print_header();
 
@@ -214,6 +253,23 @@ int main(int argc, char *argv[]){
 					cout << "Distance Fred : " << discrete_distance_fred.value << endl;
 					cout << "Distance Chris : " << discrete_distance_chris << endl;
 
+					// CHRIS 13.12.2021 START
+
+					distance_fred_tmp = discrete_distance_fred.value;
+					distance_chris_tmp = discrete_distance_chris;
+
+					if (CU_add_test(pSuite, "distance_test", test_discrete_distance_results) == NULL)
+					{
+						CU_cleanup_registry();
+						return CU_get_error();
+					}
+
+					CU_basic_set_mode(CU_BRM_VERBOSE);
+					CU_basic_run_tests();
+					CU_cleanup_registry();
+
+					// CHRIS 13.12.2021 END
+
 
 					// approx_results = lsh->kNN_lsh_discrete_frechet(q , 1);
 
@@ -268,6 +324,37 @@ int main(int argc, char *argv[]){
 }
 
 //------------------------------------------------------------------------------------------------------------------
+
+
+// CHRIS 13.12.2021 START
+
+int init_distance_suite()
+{
+	if ((test_suite_results = fopen("test_results_distance.xml", "w+")) != NULL)
+		return 0;
+	else
+		return -1;
+}
+
+int clean_distance_suite()
+{
+	if (fclose(test_suite_results) != 0)
+		return -1;
+	else
+	{
+		test_suite_results = NULL;
+		return 0;
+	}
+}
+
+
+void test_discrete_distance_results()
+{
+	double discrete_distance_offset = abs(distance_fred_tmp - distance_chris_tmp);
+	CU_ASSERT(discrete_distance_offset <= MAX_DISTANCE_OFFSET);
+}
+
+// CHRIS 13.12.2021 END
 
 void garbage_collector(MultiHash *lsh, Hypercube *cube){
 	if( lsh  != nullptr ){ delete lsh;  }
