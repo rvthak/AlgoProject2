@@ -158,7 +158,7 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 		}
 
 		// In case we fail to find enough ID matches, just ignore the IDs
-		if( id_matches > k ){
+		if( id_matches < k ){
 			cur = bucket->first;
 			while( cur != nullptr ){
 				list->add( cur->data, query->l2(cur->data));
