@@ -1,5 +1,9 @@
 #include <fstream>
 #include <iostream>
+
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
+
 #include "Args.h"
 #include "timer.h"
 #include "utils.h"
@@ -9,24 +13,27 @@
 #include "hash_cube.h"
 #include "GridHash.h"
 
-//------------------------------------------------------------------------------------------------------------------
+#include "point.hpp"
+#include "curve.hpp"
+#include "frechet.hpp"
 
-double approx_time_sum=0, true_time_sum=0;
-double MAF = 0; // Max Approximation Factor
-unsigned count=0;
+#define MAX_DISTANCE_OFFSET 0.400
 
-void reset_stats();
-void report_statistics(std::string filename, bool ignoreTrue, double total_time);
-void report_results(std::string filename, std::string id, std::string algo, bool ignoreTrue, 
-                    ShortedList *approx_r, double approx_time, 
-                    ShortedList *true_r, double true_time);
+static FILE* test_results = NULL;
 
-void clear_results(ShortedList **approx_res, ShortedList **true_res);
-void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid);
+int init_suite();
+int clean_suite();
 
-//------------------------------------------------------------------------------------------------------------------
+Vector* input_vector_tmp;
+Vector* query_vector_tmp;
 
-int main(int argc, char *argv[]){
+Curve* input_curve_tmp;
+Curve* query_curve_tmp;
+
+void test_discrete_distance();
+
+int main(int argc, char *argv[])
+{
 	bool running = true;
 	print_header();
 
@@ -39,169 +46,70 @@ int main(int argc, char *argv[]){
 	args.print();
 
 	// Create Timers to time the tests
-	Timer t, timer;
-	double approx_time, true_time;
+	while(running)
+	{
+		CU_pSuite pSuite = NULL;
 
-	// Pointers to the query results
-	ShortedList *approx_results=nullptr, *true_results=nullptr;
+   		if (CU_initialize_registry() != CUE_SUCCESS)
+      		return CU_get_error();
 
-	// Enter the main program loop
-	while(running){
+		pSuite = CU_add_suite("Suite_Distances", init_suite, clean_suite);
+   		
+		if (pSuite == NULL) 
+		{
+      		CU_cleanup_registry();
+      		return CU_get_error();
+   		}
 
-		// Ask for args (Asks only for "Empty" args)
-		args.read_args();
-		std::cout << "\033[36;1m (I)\033[33;1m Creating Structs and Loading Data... " << std::endl;
-		t.tic();
-
-		// Load both the input and query file data
-		VectorArray input_vecs(args.input_file);
-		VectorArray query_vecs(args.query_file);
-		//query_vecs.print();
-
-		// Build the user-selected Data structures
-		MultiHash *lsh  = nullptr;
-		Hypercube *cube = nullptr;
-		GridHash  *grid = nullptr;
-
-		if( args.algorithm == "LSH" ){
-			lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
-			lsh->loadVectors(&input_vecs);
+		if (CU_add_test(pSuite, "Test Of Discrete Distance", test_discrete_distance) == NULL)
+		{
+			CU_cleanup_registry();
+			return CU_get_error();
 		}
-		else if( args.algorithm == "Hypercube" ){
-			cube = new Hypercube(args.k, getFileLines(args.input_file)/DIVISION_SIZE_CUBE, getFileLineLength(args.input_file)-1);
-			cube->set_search_limits(args.probes, args.M, args.k);
-			cube->loadVectors(&input_vecs);
-		}
-		else{ // Frechet
-			unsigned dim; // The projection dimention
-			if( args.metric == "discrete"){ dim=2; }
-			else { dim=1; }
 
-			grid = new GridHash(args.delta, args.L, dim, args.k, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);
-			grid->loadVectors(&input_vecs);
-		}
-		print_structs_created(t.toc());
-
-		//------------------------------------------------------------------------------------------------------------------
-		
-		t.tic();
-		// Run tests for each query Vector:
-		for(unsigned i=0; i<(query_vecs.size); i++){
-
-			Vector *q = &((query_vecs.array)[i]);
-
-			// Run and time the tests
-			if( args.algorithm == "LSH" ){
-				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
-			} 
-			else if( args.algorithm == "Hypercube" ){
-				timer.tic(); cube->search_hypercube(q);
-				approx_results = cube->k_nearest_neighbors_search(1); approx_time = timer.toc();
-			} 
-			else if( (args.algorithm == "Frechet") && (args.metric == "discrete") ){
-				timer.tic();  approx_results = grid->disc_NN_lsh(q); approx_time = timer.toc();
-			}
-			else{ // Continuous Frechet
-				timer.tic();  approx_results = grid->cont_NN_lsh(q); approx_time = timer.toc();
-			}
-
-			if( args.notTrue == false ){
-				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1)); true_time = timer.toc();
-			}
-
-			// Write a report on the output file
-			report_results(args.output_file, q->name, args.algorithm, args.notTrue, approx_results, approx_time, true_results, true_time);
-
-			// Results written in output file => Free the memory
-			clear_results(&approx_results, &true_results);
-			std::cout << " > Query " << q->id << std::endl;
-
-		} std::cout << std::endl;
-
-		// Print Out Performance Stats
-		report_statistics( args.output_file, args.notTrue, t.toc() );
-
-		//------------------------------------------------------------------------------------------------------------------
-
-		// Garbage Collection
-		garbage_collector(lsh, cube, grid);
-
-		// Clear the old args and reset the stats
-		args.clear(); reset_stats();
-
-		// Ask user if he wants to stop the program
-		running = !question(" Would you like to exit the program?");
+		CU_basic_set_mode(CU_BRM_VERBOSE);
+		CU_basic_run_tests();
+		CU_cleanup_registry();
+		return CU_get_error();
 	}
+
 	print_footer();
 	return 0;
 }
 
-//------------------------------------------------------------------------------------------------------------------
 
-void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid){
-	if( lsh  != nullptr ){ delete lsh;  }
-	if( cube != nullptr ){ delete cube; }
-	if( grid != nullptr ){ delete grid; }
-}
-
-void clear_results(ShortedList **approx_res, ShortedList **true_res){
-	if( (*approx_res) != nullptr ){ delete *approx_res; (*approx_res) = nullptr; }
-	if( (*true_res)   != nullptr ){ delete *true_res;   (*true_res  ) = nullptr; }
-}
-
-// Write a report of the results for the given id on the output file
-void report_results(std::string filename, std::string id, std::string algo, bool ignoreTrue, ShortedList *approx_r, double approx_time, ShortedList *true_r, double true_time){
-	double cur_maf;
-
-	// Open the output file in append mode 
- 	std::ofstream file(filename, std::ios_base::app);
-
-	// Write the query results
-	file << "Query: " << id << std::endl;
-	file << "Algorithm: " << algo << std::endl;
-
-	file << "Approximate Nearest neighbor: " << approx_r->first->v->name << std::endl;
-	if( !ignoreTrue ){
-		file << "True Nearest neighbor: " << true_r->first->v->name << std::endl;
+int init_suite()
+{
+	if ((test_results = fopen("test_results.txt", "w+")) == NULL)
+	{
+		return -1;
 	}
-
-	file << "distanceApproximate: " << approx_r->first->dist << std::endl;
-	if( !ignoreTrue ){
-		file << "distanceTrue: " << true_r->first->dist << std::endl;
+	else
+	{
+		return 0;
 	}
-
-	// Update any needed stat variables
-	approx_time_sum+=approx_time;
-	true_time_sum+=true_time;
-	count++;
-
-	if( !ignoreTrue ){
-		cur_maf = true_time/approx_time;
-		if( cur_maf > MAF ){ MAF = cur_maf; }
-	}	
-
-  	file << std::endl;
 }
 
-// Write the final statistics report on the output file
-void report_statistics(std::string filename, bool ignoreTrue, double total_time){
-	// Open the output file in append mode 
-	std::ofstream file(filename, std::ios_base::app);
-
- 	file << "tApproximateAverage: " << approx_time_sum/count << std::endl;
-
- 	if( !ignoreTrue ){
- 		file << "tTrueAverage: " << true_time_sum/count << std::endl;
- 		file << "MAF: " << MAF << std::endl;
- 	}
-
- 	print_total_time(total_time);
+int clean_suite()
+{
+	if (fclose(test_results) != 0)
+	{
+		return -1;
+	}
+	else
+	{
+		test_results = NULL;
+		return 0;
+	}
 }
 
-// Reset the values of the stat counters before the next run
-void reset_stats(){
-	approx_time_sum=0;
-	true_time_sum=0;
-	MAF = 0;
-	count=0;
+void test_discrete_distance()
+{
+	input_curve_tmp = input_vector_tmp->create_Curve();
+	query_curve_tmp = query_vector_tmp->create_Curve();
+
+	double distance_chris = input_vector_tmp->discrete_frechet_distance(query_vector_tmp);
+	double distance_fred = Frechet::Discrete::distance(*input_curve_tmp, *query_curve_tmp).value;
+
+	CU_ASSERT(abs(distance_chris - distance_fred) <= MAX_DISTANCE_OFFSET);
 }

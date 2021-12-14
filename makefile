@@ -2,7 +2,7 @@
 #--------------------------------------------------------------------------
 
 CC=g++
-CFLAGS=-Wall -Iinclude -fopenmp
+CFLAGS=-Wall -Iinclude -fopenmp -lcunit
 
 INPUT_FILE=./datasets/nasdaq2017_LQ.csv
 QUERY_FILE=./datasets/nasdaq2017_LQ_queries.csv
