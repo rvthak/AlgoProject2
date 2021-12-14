@@ -492,6 +492,8 @@ void ARGS_Cluster::print(){
 // SEARCH ARGS
 //------------------------------------------------------------------------------------------------------------------
 
+#define FRECHET_DEFAULT_L 4
+
 // Read any given initial terminal arguments and store them
 void ARGS_Search::read_terminal(int argc, char *argv[]){
 
@@ -689,6 +691,10 @@ void ARGS_Search::load_defaults(){
 		if( this->k == EMPTY_INT ){ this->k = CUBE_DEFAULT_K; }
 		if( this->M == EMPTY_INT ){ 	 this->M = CUBE_DEFAULT_M; }
 		if( this->probes == EMPTY_INT ){ this->probes = CUBE_DEFAULT_PROBES; }
+	}
+	else{
+		if( this->k == EMPTY_INT ){ this->k = LSH_DEFAULT_K; }
+		if( this->L == EMPTY_INT ){ this->L = FRECHET_DEFAULT_L; }
 	}
 }
 
