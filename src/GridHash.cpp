@@ -7,7 +7,8 @@
 using namespace std;
 
 GridHash::GridHash(double delta, unsigned grid_amount, unsigned dim, int k, unsigned tableSize, unsigned v_size){
-	
+	//cout << " Creating " << grid_amount << " Grids for hashing." << endl;
+
 	if( dim!=1 && dim!=2 ){
 		cout << "(!) Fatal Error: Unsupported Projection dimention given. Shutting down" << endl;
 		exit(1);
@@ -132,6 +133,11 @@ ShortedList *GridHash::disc_NN_lsh(Vector *query){
 			}
 		}
 	}
+
+	if( list->first == nullptr ){
+		cout << " (!) NO NEIGHBOR FOUND (!) " << endl;
+	}
+
 	return list;
 }
 

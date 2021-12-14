@@ -19,7 +19,6 @@ struct GridHash{
 	GridHash(double delta, unsigned grid_amount, unsigned dim, int k, unsigned tableSize, unsigned v_size);
 	~GridHash();
 
-	// Use the 
 	void add(Vector *vec);
 
 	Vector *hash_2D(Vector *vec, double t);	// Return a hashed version of the given Vector, following the 2D projection pipeline
