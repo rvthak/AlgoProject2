@@ -4,8 +4,8 @@
 CC=g++
 CFLAGS=-Wall -Iinclude -fopenmp
 
-INPUT_FILE=./datasets/nasdaq2017_LQ.csv
-QUERY_FILE=./datasets/nasdaq2017_LQ_queries.csv
+INPUT_FILE=./datasets/nasd_input.csv
+QUERY_FILE=./datasets/nasd_query.csv
 CONFIG_FILE=./cluster.conf
 
 SEARCH_OUTPUT_FILE=search_out.txt
