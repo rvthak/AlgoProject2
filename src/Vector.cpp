@@ -53,9 +53,6 @@ double Vector::discrete_frechet_distance(Vector *p){
 	for(unsigned i=0; i<(this->size()); i++){	// For every 2D point in Vector 'this'
 		for(unsigned j=0; j<(p->size()); j++){	// For every 2D point in Vector 'p'
 			dist[i][j] = euclidian_distance(i,(this->vec)[i], j,(p->vec)[j]);
-		    std::cout << "(i,v[i]): (" << i << "," <<  (this->vec)[i] << ", (j,p[j]): (" << j << "," << (p->vec)[j] << ", dist: " << dist[i][j] << std::endl;
-
-			//cout << "i: " << i << ", j: " << j << ", dist: " << dist[i][j] << endl;
 		}
 	}
 
@@ -71,7 +68,6 @@ double Vector::discrete_frechet_distance(Vector *p){
 			} else {
 				c[i][j] = max( min( min( c[i-1][j],c[i-1][j-1] ), c[i][j-1] ), dist[i][j] );
 			}
-			//cout << "i: " << i << ", j: " << j << ", dist: " << dist[i][j] << ", c[i][j]: " << c[i][j] << endl;
 		}
 	}
 
