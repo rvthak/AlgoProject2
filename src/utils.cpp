@@ -273,3 +273,26 @@ bool positive_less_than(double x, double y){
 	if(x<y){ return true; }
 	return false;
 }
+
+// Calculate the euclidian distance between p1(x1,y1) and p2(x2,y2)
+double euclidian_distance(double x1, double y1, double x2, double y2){
+	double d1 = x2 - x1;
+	double d2 = y2 - y1;
+    return sqrt(d1*d1 + d2*d2);
+}
+
+// Allocate a table[width][height] containing doubles
+double **new_2D_table(unsigned width, unsigned height){
+	double **table = new double *[width];
+
+	for(unsigned i=0; i<width; i++){
+		table[i] = new double[height];
+	}
+	return table;
+}
+
+// Free the given 2D table 
+void delete_2D_table(double **table, unsigned width){
+	for(unsigned i=0; i<width; i++){ delete [] table[i]; }; 
+	delete [] table;
+}
