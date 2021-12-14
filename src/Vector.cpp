@@ -42,40 +42,47 @@ double Vector::l2(Vector *p){
 // Returns the discrete frechet distance between the two vectors
 double Vector::discrete_frechet_distance(Vector *p){
 
-	// Create a table of size 'm x n' where 'm' and 'n' are the sizes of the two Vectors
-	double **table = new double *[this->size()];
-	for(unsigned i=0; i<(this->size()); i++){
-		table[i] = new double[p->size()];
+	// Create two tables of size 'm x n' where 'm' and 'n' are the sizes of the two Vectors
+	// 'c' is used to compute the discrete Frechet Distance
+	double **c = new_2D_table(this->size(), p->size());
+	
+	// 'dist' stores the euclidian_distance between every point of one Vector with every point of the other vector
+	double **dist = new_2D_table(this->size(), p->size());
+
+	// Calculate the distances and store them
+	for(unsigned i=0; i<(this->size()); i++){	// For every 2D point in Vector 'this'
+		for(unsigned j=0; j<(p->size()); j++){	// For every 2D point in Vector 'p'
+			dist[i][j] = euclidian_distance(i,(this->vec)[i], j,(p->vec)[j]);
+		    std::cout << "(i,v[i]): (" << i << "," <<  (this->vec)[i] << ", (j,p[j]): (" << j << "," << (p->vec)[j] << ", dist: " << dist[i][j] << std::endl;
+
+			//cout << "i: " << i << ", j: " << j << ", dist: " << dist[i][j] << endl;
+		}
 	}
 
-	// Initialize the first cell, first column and first row according
-	// to the given types from the slides (Slide 9)
-	table[0][0] = abs( (this->vec)[0]-(p->vec)[0] );
-
-	for(unsigned i=1; i<(this->size()); i++){
-		table[i][0] = max( table[i-1][0] , abs( (this->vec)[i]-(p->vec)[0] ) );
-	}
-	for(unsigned i=1; i<(p->size()); i++){
-		table[0][i] = max( table[0][i-1] , abs( (this->vec)[0]-(p->vec)[i] ) );
-	}
-
-	// Finally, based on the initialized part of the table, build the rest
-	// using the final given type
+	// Use the distances to calculate the Frechet distance
 	for(unsigned i=1; i<(this->size()); i++){
 		for(unsigned j=1; j<(p->size()); j++){
-			table[i][j] = max( min( min(table[i-1][j], table[i-1][j-1]), table[i][j-1]), abs( (this->vec)[i]-(p->vec)[j] ));
+			if( (i==0)&&(j==0) ){
+				c[i][j] = dist[i][j];
+			} else if( i==0 ){
+				c[i][j] = max( c[i][j-1], dist[i][j] );
+			} else if( j==0 ){
+				c[i][j] = max( c[i-1][j], dist[i][j] );
+			} else {
+				c[i][j] = max( min( min( c[i-1][j],c[i-1][j-1] ), c[i][j-1] ), dist[i][j] );
+			}
+			//cout << "i: " << i << ", j: " << j << ", dist: " << dist[i][j] << ", c[i][j]: " << c[i][j] << endl;
 		}
 	}
 
 	// Return the value of the last table cell == The Frechet distance
-	double dist = table[(this->size())-1][(p->size())-1];
+	double frechet = c[(this->size())-1][(p->size())-1];
 
 	// Free the memory before returning
-	// NOTE: Since in out usecase we only calc distances between Vectors of the same - globally constant size
-	// We can create the table once as a static table and reuse it every time to save time from memory 
-	for(unsigned i=0; i<(this->size()); i++){ delete [] table[i]; }; delete [] table;
-	
-	return dist;
+	delete_2D_table(c, this->size());
+	delete_2D_table(dist, this->size());
+
+	return frechet;
 }
 
 // Returns the continuous frechet distance between the two vectors
