@@ -8,7 +8,7 @@
 #include "hash_fun.h"
 #include "shortedList.h"
 
-#define DIVISION_SIZE 16
+#define DIVISION_SIZE 15
 
 // Sinple Hash Table Struct that uses randomized Hash Functions
 struct HashTable{
