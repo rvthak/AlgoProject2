@@ -16,8 +16,6 @@
 #include "curve.hpp"
 #include "frechet.hpp"
 
-#define MAX_DISTANCE_OFFSET 200.0  // CHRIS 13.12.2021 START
-
 int main(int argc, char *argv[])
 {
 	bool running = true;

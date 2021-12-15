@@ -2,7 +2,7 @@
 #--------------------------------------------------------------------------
 
 CC=g++
-CFLAGS=-Wall -lcunit -Iinclude -fopenmp
+CFLAGS=-Wall -Iinclude -fopenmp
 
 INPUT_FILE=./datasets/nasd_input.csv
 QUERY_FILE=./datasets/nasd_query.csv
