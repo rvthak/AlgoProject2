@@ -674,7 +674,7 @@ void ARGS_Search::read_args(){
 		}
 		else{ error_arg("metric"); }
 	}
-	if( this->delta == EMPTY_FLOAT ){
+	if( (this->algorithm == "Frechet") && (this->delta == EMPTY_FLOAT) ){
 		read_arg("delta");
 		if( cin >> this->delta ){}
 		else{ error_arg("delta"); }
