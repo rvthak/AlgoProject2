@@ -93,7 +93,7 @@ bool belongs(double x, double start, double end){
 // Snap the given number 'q' to the closest grid point
 // Grid is defined by delta and t values
 double snap(double q, double delta, double t){
-	return (floor( (q-t)/delta + 0.5 )*delta + t);
+	return round((q-t)/delta)*delta + t;
 }
 
 // Modulo : Always positive
