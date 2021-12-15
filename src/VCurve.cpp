@@ -97,7 +97,9 @@ void VCurve::remove_duplicates(){
 	y.push_back( (this->y)[0] );
 
 	for(unsigned i=1; i<(this->size()); i++){
-		if( (this->x)[i]==(this->x)[i-1] && (this->y)[i]==(this->y)[i-1] ){ continue; }
+		if( (this->x)[i]==(this->x)[i-1] && (this->y)[i]==(this->y)[i-1] ){ 
+			//cout << " REOVED" << endl;
+			continue; }
 		x.push_back( (this->x)[i] );
 		y.push_back( (this->y)[i] );
 	}
@@ -130,7 +132,7 @@ void VCurve::snap_1D(double delta, double t){
 void VCurve::add_padding(){
 	unsigned vec_len=this->size();
 
-	for(unsigned i=0; i<(this->max_vec_size); i++){
+	for(unsigned i=0; i<((this->max_vec_size)/2); i++){
 
 		if( i >= vec_len ){
 			(this->x).push_back(PADDING_NUM);
