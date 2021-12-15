@@ -20,6 +20,7 @@ GridHash::GridHash(double delta, unsigned grid_amount, unsigned dim, int k, unsi
 	for(unsigned i=0; i<grid_amount; i++){
 		(this->grid_t).push_back(uniform_distribution_real(0, delta-0.000001));
 		// Used '0.000001' to simulate excluding delta itself from the results
+		cout << " " << (this->grid_t)[i] << endl;
 	}
 
 	// Create a Multihash Struct for each
@@ -46,6 +47,9 @@ Vector *GridHash::hash_2D(Vector *vec, double t){
 
 	// Remove any resulting duplicates
 	curve.remove_duplicates();
+
+	// Add padding if needed
+	curve.add_padding();
 
 	// Vectorize the VCurve into a key Vector and return it
 	return curve.vectorize();
