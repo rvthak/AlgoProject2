@@ -17,8 +17,8 @@ OUT_SEARCH=./bin/search
 
 RUNFLAGS_SEARCH_LSH= -algorithm LSH -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
 RUNFLAGS_SEARCH_CUB= -algorithm Hypercube -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
-RUNFLAGS_SEARCH_DIS= -algorithm Frechet -metric discrete -delta 1.5 -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
-RUNFLAGS_SEARCH_CON= -algorithm Frechet -metric continuous -delta 1.5 -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
+RUNFLAGS_SEARCH_DIS= -algorithm Frechet -metric discrete -delta 1.618 -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
+RUNFLAGS_SEARCH_CON= -algorithm Frechet -metric continuous -delta 1.618 -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
 
 VGFLAGS=--leak-check=full --show-leak-kinds=all --leak-resolution=high --track-origins=yes
 

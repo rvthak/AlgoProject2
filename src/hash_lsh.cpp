@@ -40,7 +40,7 @@ int HashTable::add(Vector *vec){
 int HashTable::add(Vector *vec, Vector *key){
 	unsigned long id = this->g->ID(key);
 	unsigned long index = mod(id, g->tableSize);
-	//std::cout << " KEY: " << key << ", ID: " << id << std::endl;
+	//std::cout << " Index: " << index << ", ID: " << id << std::endl;
 	return (this->bucs)[index].add(vec, id);
 }
 
