@@ -36,7 +36,7 @@ struct VectorArray{
 	VectorArray(std::string filename);
 	~VectorArray();
 
-	void *kNN_naive(Vector *query, unsigned k);
+	void *kNN_naive(Vector *query, unsigned k, unsigned mode);
 	void print();	// Print all the Vectors of the Array
 
 	int add_vector(unsigned index, int id, std::string name, std::vector<double> data);
