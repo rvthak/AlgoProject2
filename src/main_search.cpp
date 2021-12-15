@@ -28,6 +28,7 @@ void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid);
 
 int main(int argc, char *argv[]){
 	bool running = true;
+	unsigned mode=0;
 	print_header();
 
 	// A struct to store the program parameters
@@ -66,16 +67,18 @@ int main(int argc, char *argv[]){
 		if( args.algorithm == "LSH" ){
 			lsh = new MultiHash(args.k, args.L, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);			
 			lsh->loadVectors(&input_vecs);
+			mode = 0;
 		}
 		else if( args.algorithm == "Hypercube" ){
 			cube = new Hypercube(args.k, getFileLines(args.input_file)/DIVISION_SIZE_CUBE, getFileLineLength(args.input_file)-1);
 			cube->set_search_limits(args.probes, args.M, args.k);
 			cube->loadVectors(&input_vecs);
+			mode = 0;
 		}
 		else{ // Frechet
 			unsigned dim; // The projection dimention
-			if( args.metric == "discrete"){ dim=2; }
-			else { dim=1; }
+			if( args.metric == "discrete"){ dim=2; mode = 1;}
+			else { dim=1; mode = 2; }
 
 			grid = new GridHash(args.delta, args.L, dim, args.k, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);
 			grid->loadVectors(&input_vecs);
@@ -106,7 +109,7 @@ int main(int argc, char *argv[]){
 			}
 
 			if( args.notTrue == false ){
-				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1)); true_time = timer.toc();
+				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1, mode)); true_time = timer.toc();
 			}
 
 			// Write a report on the output file
@@ -160,12 +163,22 @@ void report_results(std::string filename, std::string id, std::string algo, bool
 	file << "Query: " << id << std::endl;
 	file << "Algorithm: " << algo << std::endl;
 
-	file << "Approximate Nearest neighbor: " << approx_r->first->v->name << std::endl;
+	if( approx_r->first == nullptr ){
+		file << "Approximate Nearest neighbor: Not found" << std::endl;
+	} else {
+		file << "Approximate Nearest neighbor: " << approx_r->first->v->name << std::endl;
+	}
+	
 	if( !ignoreTrue ){
 		file << "True Nearest neighbor: " << true_r->first->v->name << std::endl;
 	}
 
-	file << "distanceApproximate: " << approx_r->first->dist << std::endl;
+	if( approx_r->first == nullptr ){
+		file << "distanceApproximate: Not found" << std::endl;
+	} else {
+		file << "distanceApproximate: " << approx_r->first->dist << std::endl;
+	}
+	
 	if( !ignoreTrue ){
 		file << "distanceTrue: " << true_r->first->dist << std::endl;
 	}
@@ -176,8 +189,10 @@ void report_results(std::string filename, std::string id, std::string algo, bool
 	count++;
 
 	if( !ignoreTrue ){
-		cur_maf = true_time/approx_time;
-		if( cur_maf > MAF ){ MAF = cur_maf; }
+		if( approx_r->first != nullptr ){
+			cur_maf = (approx_r->first->dist)/(true_r->first->dist);
+			if( cur_maf > MAF ){ MAF = cur_maf; }
+		}
 	}	
 
   	file << std::endl;
