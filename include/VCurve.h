@@ -31,8 +31,8 @@ struct VCurve{
 // We work under the assumption that all the Vectors of our dataset share the same length
 // "max_vec_size": It corresponds to the Vector complexity * 2 
 
-// A.ii  Pipeline: snap_2D -> remove_duplicates -> vectorize
-// A.iii Pipeline: filter -> snap_1D -> minima_maxima -> vectorize
+// A.ii  Pipeline: snap_2D -> remove_duplicates -> padding 
+// A.iii Pipeline: filter -> snap_1D -> minima_maxima -> padding 
 // ( In the second case I think minima_maxima also filters-out any duplicates as well )
 
 #endif
