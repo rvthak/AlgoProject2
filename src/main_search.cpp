@@ -13,6 +13,7 @@
 
 double approx_time_sum=0, true_time_sum=0;
 double MAF = 0; // Max Approximation Factor
+double AAF = 0; // Average Approximation Factor
 unsigned count=0;
 
 void reset_stats();
@@ -192,6 +193,7 @@ void report_results(std::string filename, std::string id, std::string algo, bool
 		if( approx_r->first != nullptr ){
 			cur_maf = (approx_r->first->dist)/(true_r->first->dist);
 			if( cur_maf > MAF ){ MAF = cur_maf; }
+			AAF += cur_maf;
 		}
 	}	
 
@@ -209,6 +211,9 @@ void report_statistics(std::string filename, bool ignoreTrue, double total_time)
  		file << "tTrueAverage: " << true_time_sum/count << std::endl;
  		file << "MAF: " << MAF << std::endl;
  	}
+
+ 	cout << "\033[36;1m (T)\033[33;1m Average Approximation Factor: " << AAF/count << endl;
+ 	cout << "\033[36;1m (T)\033[33;1m Average Time Ratio: " << approx_time_sum/true_time_sum << endl << endl;
 
  	print_total_time(total_time);
 }
