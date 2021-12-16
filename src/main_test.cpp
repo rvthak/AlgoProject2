@@ -16,6 +16,10 @@
 #include "curve.hpp"
 #include "frechet.hpp"
 
+#include "cppunit/TestCaller.h"
+#include "cppunit/TestSuite.h"
+#include "DistanceUnitTest.h"
+
 int main(int argc, char *argv[])
 {
 	bool running = true;
@@ -46,6 +50,21 @@ int main(int argc, char *argv[])
 
 		Curve* input_curve_1 = input_vector_1->create_Curve();
 		Curve* query_curve_1 = query_vector_1->create_Curve();
+
+		CppUnit::TestSuite suite;
+		// CppUnit::TestResult result;
+
+		CppUnit::TestCaller<DistanceUnitTest> test("discrete_distance_test", &DistanceUnitTest::discrete_distance);
+		CppUnit::TestResult result;
+
+		test.run(&result);
+
+		// suite.addTest
+		// (
+		// 	new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test", &DistanceUnitTest::discrete_distance))
+
+		// );
+
 
 		// Initialize Unit Tests
 

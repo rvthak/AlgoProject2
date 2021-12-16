@@ -28,9 +28,9 @@ public:
     DistanceUnitTest(string name) : CppUnit::TestCase(name) {}
     ~DistanceUnitTest();
 
-    void setup_test(Vector* input_vector, Vector* query_vector);
+    void setUp();
     void setup_test(Curve* input_curve, Curve* query_curve);
-    void run_distance_test();
+    void discrete_distance();
 };
 
 
