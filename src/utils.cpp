@@ -147,7 +147,7 @@ void print_avg_divergence(double div){
 
 // Print the total time
 void print_total_time(double time){
-	std::cout << "\033[36;1m (T)\033[33;1m Total Execution Time: \033[0m" << time << " \033[33;1msec\033[0m" << std::endl << std::endl;
+	std::cout << "\033[33;1m (i) Total Execution Time: \033[0m" << time << " \033[33;1msec\033[0m" << std::endl << std::endl;
 }
 
 // Print the Amount of time to create the structs and load the data
@@ -198,7 +198,7 @@ unsigned generate_bit_from_h_key(unsigned h_key)
 // Calculate the dot product between the two given vectors
 double dot_product(std::vector<double> x, std::vector<double> y){
 	double sum = 0;
-	for(unsigned i=0; i<(x.size()); i++){
+	for(unsigned i=0; i<(y.size()); i++){
 		sum += x[i] * y[i];
 	}
 	return sum;
@@ -287,6 +287,9 @@ double **new_2D_table(unsigned width, unsigned height){
 
 	for(unsigned i=0; i<width; i++){
 		table[i] = new double[height];
+		for(unsigned j=0; j<height; j++){
+			table[i][j] = 0;
+		}
 	}
 	return table;
 }

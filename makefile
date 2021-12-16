@@ -2,10 +2,10 @@
 #--------------------------------------------------------------------------
 
 CC=g++
-CFLAGS=-Wall -Iinclude -fopenmp
+CFLAGS=-Iinclude -fopenmp
 
-INPUT_FILE=./datasets/nasd_input.csv
-QUERY_FILE=./datasets/nasd_query.csv
+INPUT_FILE=./datasets/mini_input.csv
+QUERY_FILE=./datasets/mini_query.csv
 CONFIG_FILE=./cluster.conf
 
 SEARCH_OUTPUT_FILE=search_out.txt
@@ -54,7 +54,7 @@ cont: $(OUT_SEARCH)
 
 #--------------------------------------------------------------------------
 
-VG_RUNFLAGS=$(RUNFLAGS_SEARCH_LSH)
+VG_RUNFLAGS=$(RUNFLAGS_SEARCH_DIS)
 
 vg_search: $(OUT_SEARCH)
 	valgrind $(OUT_SEARCH) $(VG_RUNFLAGS)

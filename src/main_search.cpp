@@ -9,6 +9,8 @@
 #include "hash_cube.h"
 #include "GridHash.h"
 
+using namespace std;
+
 //------------------------------------------------------------------------------------------------------------------
 
 double approx_time_sum=0, true_time_sum=0;
@@ -41,7 +43,7 @@ int main(int argc, char *argv[]){
 	args.print();
 
 	// Create Timers to time the tests
-	Timer t, timer;
+	Timer t, timer, test;
 	double approx_time, true_time;
 
 	// Pointers to the query results
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]){
 
 		// Ask for args (Asks only for "Empty" args)
 		args.read_args();
-		std::cout << "\033[36;1m (I)\033[33;1m Creating Structs and Loading Data... " << std::endl;
+		cout << "\033[36;1m (I)\033[33;1m Creating Structs and Loading Data... " << endl;
 		t.tic();
 
 		// Load both the input and query file data
@@ -94,6 +96,9 @@ int main(int argc, char *argv[]){
 
 			Vector *q = &((query_vecs.array)[i]);
 
+			test.tic();
+			cout << "\033[36;1m (i)\033[33;1m Query \033[36;1m" << q->id << "\033[33;1m Started\033[0m" <<endl;
+
 			// Run and time the tests
 			if( args.algorithm == "LSH" ){
 				timer.tic();  approx_results = lsh->kNN_lsh(q , 1); approx_time = timer.toc();
@@ -109,18 +114,21 @@ int main(int argc, char *argv[]){
 				timer.tic();  approx_results = grid->cont_NN_lsh(q); approx_time = timer.toc();
 			}
 
+			cout << "\033[36;1m >\033[33;1m Completed Approximate search in: \033[0m" << test.toc() << "\033[33;1m sec\033[0m" << endl;
+			test.tic(); 
+
 			if( args.notTrue == false ){
 				timer.tic(); true_results = (ShortedList *)(input_vecs.kNN_naive(q , 1, mode)); true_time = timer.toc();
 			}
+			cout << "\033[36;1m >\033[33;1m Completed True search in: \033[0m" << test.toc() << "\033[33;1m sec\033[0m" << endl << endl;
 
 			// Write a report on the output file
 			report_results(args.output_file, q->name, args.algorithm, args.notTrue, approx_results, approx_time, true_results, true_time);
 
 			// Results written in output file => Free the memory
 			clear_results(&approx_results, &true_results);
-			std::cout << " > Query " << q->id << std::endl;
 
-		} std::cout << std::endl;
+		} cout << endl;
 
 		// Print Out Performance Stats
 		report_statistics( args.output_file, args.notTrue, t.toc() );
@@ -161,27 +169,27 @@ void report_results(std::string filename, std::string id, std::string algo, bool
  	std::ofstream file(filename, std::ios_base::app);
 
 	// Write the query results
-	file << "Query: " << id << std::endl;
-	file << "Algorithm: " << algo << std::endl;
+	file << "Query: " << id << endl;
+	file << "Algorithm: " << algo << endl;
 
 	if( approx_r->first == nullptr ){
-		file << "Approximate Nearest neighbor: Not found" << std::endl;
+		file << "Approximate Nearest neighbor: Not found" << endl;
 	} else {
-		file << "Approximate Nearest neighbor: " << approx_r->first->v->name << std::endl;
+		file << "Approximate Nearest neighbor: " << approx_r->first->v->name << endl;
 	}
 	
 	if( !ignoreTrue ){
-		file << "True Nearest neighbor: " << true_r->first->v->name << std::endl;
+		file << "True Nearest neighbor: " << true_r->first->v->name << endl;
 	}
 
 	if( approx_r->first == nullptr ){
-		file << "distanceApproximate: Not found" << std::endl;
+		file << "distanceApproximate: Not found" << endl;
 	} else {
-		file << "distanceApproximate: " << approx_r->first->dist << std::endl;
+		file << "distanceApproximate: " << approx_r->first->dist << endl;
 	}
 	
 	if( !ignoreTrue ){
-		file << "distanceTrue: " << true_r->first->dist << std::endl;
+		file << "distanceTrue: " << true_r->first->dist << endl;
 	}
 
 	// Update any needed stat variables
@@ -197,7 +205,7 @@ void report_results(std::string filename, std::string id, std::string algo, bool
 		}
 	}	
 
-  	file << std::endl;
+  	file << endl;
 }
 
 // Write the final statistics report on the output file
@@ -205,16 +213,15 @@ void report_statistics(std::string filename, bool ignoreTrue, double total_time)
 	// Open the output file in append mode 
 	std::ofstream file(filename, std::ios_base::app);
 
- 	file << "tApproximateAverage: " << approx_time_sum/count << std::endl;
+ 	file << "tApproximateAverage: " << approx_time_sum/count << endl;
 
  	if( !ignoreTrue ){
- 		file << "tTrueAverage: " << true_time_sum/count << std::endl;
- 		file << "MAF: " << MAF << std::endl;
+ 		file << "tTrueAverage: " << true_time_sum/count << endl;
+ 		file << "MAF: " << MAF << endl;
  	}
 
- 	cout << "\033[36;1m (T)\033[33;1m Average Approximation Factor: " << AAF/count << endl;
- 	cout << "\033[36;1m (T)\033[33;1m Average Time Ratio: " << approx_time_sum/true_time_sum << endl << endl;
-
+ 	cout << "\033[36;1m (T)\033[33;1m Average Approximation Factor: \033[0m" << AAF/count << endl;
+ 	cout << "\033[36;1m (T)\033[33;1m Average Time Ratio: \033[0m" << approx_time_sum/true_time_sum << endl;
  	print_total_time(total_time);
 }
 

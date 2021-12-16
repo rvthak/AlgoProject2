@@ -32,6 +32,9 @@ Vector *VCurve::vectorize(){
 		(vec->vec).push_back( (this->x)[i] );
 		(vec->vec).push_back( (this->y)[i] );
 	}
+
+	//cout << vec->size() << endl;
+	
 	return vec;
 }
 

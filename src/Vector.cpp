@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "timer.h"
 #include "Vector.h"
 #include "shortedList.h"
 #include <cmath>
@@ -79,18 +80,38 @@ double Vector::discrete_frechet_distance(Vector *p){
 	delete_2D_table(dist, this->size());
 
 	return frechet;
+
+	// // Get a Curve representation of each Vector
+	// Curve *v1 = this->create_Curve();
+	// Curve *v2 = p->create_Curve();
+
+	// // Get their continuous frechet distance
+	// Frechet::Discrete::Distance fre_dist = Frechet::Discrete::distance(*v1, *v2);
+
+	// // Clean up
+	// delete v1; delete v2;
+
+	// return fre_dist.value;
 }
 
 // Returns the continuous frechet distance between the two vectors
 // Uses Fred library
 double Vector::continuous_frechet_distance(Vector *p){
+	Timer t;
+
+	t.tic();
+	cout << endl << " Started: " << endl;
 
 	// Get a Curve representation of each Vector
 	Curve *v1 = this->create_Curve();
 	Curve *v2 = p->create_Curve();
 
+	cout << " Converted: " << t.toc() << endl; t.tic();
+
 	// Get their continuous frechet distance
 	Frechet::Continuous::Distance fre_dist = Frechet::Continuous::distance(*v1, *v2);
+
+	cout << " Dove: " << t.toc() << endl; 
 
 	// Clean up
 	delete v1; delete v2;
@@ -224,6 +245,9 @@ void VectorArray::parse_input(string filename){
 	}
 }
 
+static unsigned mis_count = 0;
+static unsigned tot_count = 0;
+
 // Naive search for the k Nearest Neighbors of the given query Vector
 void *VectorArray::kNN_naive(Vector *query, unsigned k, unsigned mode){
 
@@ -238,6 +262,15 @@ void *VectorArray::kNN_naive(Vector *query, unsigned k, unsigned mode){
 			list->add( &((this->array)[i]), query->l2( &((this->array)[i]) ) );
 		} else if( mode == 1 ){
 			list->add( &((this->array)[i]), query->discrete_frechet_distance( &((this->array)[i]) ) );
+			
+			// double ours = query->discrete_frechet_distance( &((this->array)[i]) );
+			
+			// Curve *c1 = query->create_Curve();
+			// Curve *c2 = (this->array)[i].create_Curve();
+			// double fred = Frechet::Discrete::distance(*c1, *c2).value;
+			// if( ours != fred ){
+			// 	cout << " MISMATCH : (" << ++mis_count << "/" << ++tot_count << "): Ours=" << ours << ", Fred=" << fred <<  endl;
+			// }
 		} else{
 			list->add( &((this->array)[i]), query->continuous_frechet_distance( &((this->array)[i]) ) );
 		}
