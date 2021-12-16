@@ -8,7 +8,7 @@ using namespace std;
 #define PADDING_NUM 1000003.700171
 
 // A small constant used as the limit for filtering
-#define E_CONSTANT 0.1
+#define E_CONSTANT 0.3
 
 // Convert the given Vector to a VCurve
 // Uses sampling rate = 1 unit of time
@@ -47,7 +47,7 @@ void VCurve::filter(){
 	// Iterate through the VCurve triplets and filter-out any insignificant values
 	for(unsigned i=1; i<((this->size())-1); i++){
 
-		if( abs( (this->y)[i-1] - (this->y)[i] ) <= E_CONSTANT ||
+		if( abs( (this->y)[i-1] - (this->y)[i] ) <= E_CONSTANT &&
 		    abs( (this->y)[i+1] - (this->y)[i] ) <= E_CONSTANT ){
 			continue;
 		}
@@ -75,7 +75,7 @@ void VCurve::minima_maxima(){
 
 	for(unsigned i=1; i<((this->size())-1); i++){
 
-		if( belongs( (this->x)[i], min((this->x)[i-1],(this->x)[i+1]), max((this->x)[i-1],(this->x)[i+1])) ){
+		if( belongs( (this->y)[i], min((this->y)[i-1],(this->y)[i+1]), max((this->y)[i-1],(this->y)[i+1])) ){
 			continue;
 		}
 		x.push_back( (this->x)[i] );
@@ -98,7 +98,7 @@ void VCurve::remove_duplicates(){
 
 	for(unsigned i=1; i<(this->size()); i++){
 		if( (this->x)[i]==(this->x)[i-1] && (this->y)[i]==(this->y)[i-1] ){ 
-			//cout << " REOVED" << endl;
+			//cout << " REMOVED" << endl;
 			continue; }
 		x.push_back( (this->x)[i] );
 		y.push_back( (this->y)[i] );
@@ -132,7 +132,7 @@ void VCurve::snap_1D(double delta, double t){
 void VCurve::add_padding(){
 	unsigned vec_len=this->size();
 
-	for(unsigned i=0; i<((this->max_vec_size)/2); i++){
+	for(unsigned i=0; i<(this->max_vec_size); i++){
 
 		if( i >= vec_len ){
 			(this->x).push_back(PADDING_NUM);
@@ -146,9 +146,9 @@ unsigned VCurve::size(){ return (this->x).size(); }
 
 // Prints the VCurve in tuples
 void VCurve::print(){
-	cout << " [";
+	cout << " [ ";
 	for(unsigned i=0; i<(this->size()); i++){
-		cout << "(" << (this->x)[i] << "," << (this->y)[i] << "), ";
+		cout << "(" << (this->x)[i] << "," << (this->y)[i] << ") ";
 	}
-	cout << endl;
+	cout << "]" << endl;
 }

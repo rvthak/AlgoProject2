@@ -25,7 +25,7 @@ struct VCurve{
 	void add_padding();		// Add the needed amout of padding to get the curve to "max_vec_size"
 	Vector *vectorize();	// Converts the VCurve to a Vector and returns a pointer to it
 	unsigned size();		// Returns the current VCurve length
-	void print();			// Prints the VCurve	
+	void print();			// Prints the VCurve
 };
 
 // We work under the assumption that all the Vectors of our dataset share the same length
