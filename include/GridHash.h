@@ -33,6 +33,9 @@ struct GridHash{
 
 	unsigned size();	// The amount of Grids used for Hashing
 	void print();		// Print the Grid Parameters
+
+	// Print the Average bucket size for each of the existing MultiHashes
+	void averageBucketSize();
 };
 
 #endif

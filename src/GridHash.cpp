@@ -199,14 +199,16 @@ ShortedList *GridHash::cont_NN_lsh(Vector *query){
 
 // Add all the Vectors from the given VectorArray
 void GridHash::loadVectors(VectorArray *arr){
-	for(unsigned i=0; i<(this->size()); i++){
+	for(unsigned i=0; i<(arr->size); i++){
+		//cout << " Loading Vector: " << (arr->array)[i].name << endl;
 		this->add( &((arr->array)[i]) );
 	}
 }
 
 // Add all the Vectors from the given AssignmentArray
 void GridHash::loadVectors(AssignmentArray *arr){
-	for(unsigned i=0; i<(this->size()); i++){
+	for(unsigned i=0; i<(arr->size); i++){
+		//cout << " Loading Vector: " << (arr->array)[i].name << endl;
 		this->add( &((arr->array)[i]) );
 	}
 }
@@ -224,4 +226,11 @@ void GridHash::print(){
 		cout << " " << (this->grid_t)[i];
 	} cout << endl;
 	cout << "-------------------------------------------------" << endl;
+}
+
+// Print the Average bucket size for each of the existing MultiHashes
+void GridHash::averageBucketSize(){
+	for(unsigned i=0; i<(this->size()); i++){
+		cout << i << ": " << (this->mult)[i]->averageBucketSize() << endl;
+	}
 }
