@@ -66,34 +66,46 @@ void DistanceUnitTest::setUp()
 }
 
 
-void DistanceUnitTest::test_discrete_distance()
+void DistanceUnitTest::test_discrete_distance_1_1()
 {
-    // double distance_chris_1_1 = this->input_vector_1_1->discrete_frechet_distance(this->query_vector_1_1);
+    double distance_chris_1_1 = this->input_vector_1_1->discrete_frechet_distance(this->query_vector_1_1);
     double distance_fred_1_1 = Frechet::Discrete::distance(*this->input_curve_1_1, *this->query_curve_1_1).value;
 
-    // double distance_chris_1_2 = this->input_vector_1_2->discrete_frechet_distance(this->query_vector_1_2);
+    CPPUNIT_ASSERT(distance_chris_1_1 == distance_fred_1_1);
+}
+
+void DistanceUnitTest::test_discrete_distance_1_2()
+{
+    double distance_chris_1_2 = this->input_vector_1_2->discrete_frechet_distance(this->query_vector_1_2);
     double distance_fred_1_2 = Frechet::Discrete::distance(*this->input_curve_1_2, *this->query_curve_1_2).value;
     
-    // double distance_chris_2_1 = this->input_vector_2_1->discrete_frechet_distance(this->query_vector_2_1);
-    double distance_fred_2_1 = Frechet::Discrete::distance(*this->input_curve_2_1, *this->query_curve_2_1).value;
+    CPPUNIT_ASSERT(distance_chris_1_2 == distance_fred_1_2);
+}  
 
-    // double distance_chris_m_n = this->input_vector_m_n->discrete_frechet_distance(this->query_vector_m_n);
+void DistanceUnitTest::test_discrete_distance_2_1()
+{
+    double distance_chris_2_1 = this->input_vector_2_1->discrete_frechet_distance(this->query_vector_2_1);
+    double distance_fred_2_1 = Frechet::Discrete::distance(*this->input_curve_2_1, *this->query_curve_2_1).value;
+    
+    CPPUNIT_ASSERT(distance_chris_2_1 == distance_fred_2_1);
+}
+
+void DistanceUnitTest::test_discrete_distance_m_n()
+{
+    double distance_chris_m_n = this->input_vector_m_n->discrete_frechet_distance(this->query_vector_m_n);
     double distance_fred_m_n = Frechet::Discrete::distance(*this->input_curve_m_n, *this->query_curve_m_n).value;
 
-    // CPPUNIT_ASSERT(distance_chris_1_1 == distance_fred_1_1);
-    // CPPUNIT_ASSERT(distance_chris_1_2 == distance_fred_1_2);
-    // CPPUNIT_ASSERT(distance_chris_2_1 == distance_fred_2_1);
-    cout << distance_fred_m_n << endl;
-    // CPPUNIT_ASSERT(distance_chris_m_n == distance_fred_m_n);
-
-    CPPUNIT_ASSERT(1 == 1);
+    CPPUNIT_ASSERT(distance_chris_m_n == distance_fred_m_n);
 }
 
 CppUnit::Test* DistanceUnitTest::suite()
 {
     CppUnit::TestSuite *test_suite = new CppUnit::TestSuite("DistanceUnitTest");
 
-    test_suite->addTest(new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test", &DistanceUnitTest::test_discrete_distance));
+    test_suite->addTest(new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test_1_1", &DistanceUnitTest::test_discrete_distance_1_1));
+    test_suite->addTest(new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test_1_2", &DistanceUnitTest::test_discrete_distance_1_2));
+    test_suite->addTest(new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test_2_1", &DistanceUnitTest::test_discrete_distance_2_1));
+    test_suite->addTest(new CppUnit::TestCaller<DistanceUnitTest>("discrete_distance_test_m_n", &DistanceUnitTest::test_discrete_distance_m_n));
 
     return test_suite;
 }
