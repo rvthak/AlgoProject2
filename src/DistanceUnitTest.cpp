@@ -40,7 +40,7 @@ void DistanceUnitTest::setUp()
 }
 
 
-void DistanceUnitTest::discrete_distance()
+void DistanceUnitTest::test_discrete_distance()
 {
     double distance_chris_1_1 = this->input_vector_1_1->discrete_frechet_distance(this->query_vector_1_1);
     double distance_fred_1_1 = Frechet::Discrete::distance(*this->input_curve_1_1, *this->query_curve_1_1).value;

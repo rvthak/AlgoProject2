@@ -18,6 +18,8 @@
 
 #include "cppunit/TestCaller.h"
 #include "cppunit/TestSuite.h"
+#include "cppunit/TestResult.h"
+
 #include "DistanceUnitTest.h"
 
 int main(int argc, char *argv[])
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
 		CppUnit::TestSuite suite;
 		// CppUnit::TestResult result;
 
-		CppUnit::TestCaller<DistanceUnitTest> test("discrete_distance_test", &DistanceUnitTest::discrete_distance);
+		CppUnit::TestCaller<DistanceUnitTest> test("test_discrete_distance", &DistanceUnitTest::test_discrete_distance);
 		CppUnit::TestResult result;
 
 		test.run(&result);

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "cppunit/TestCase.h"
+#include "cppunit/TestFixture.h"
 
 #include "Vector.h"
 #include "VCurve.h"
@@ -14,9 +15,10 @@
 
 using namespace std;
 
-class DistanceUnitTest : public CppUnit::TestCase
+class DistanceUnitTest : public CppUnit::TestFixture
 {
 private:
+
     double max_distance_offset = MAX_DISTANCE_OFFSET;
     
     Vector* input_vector_1_1;
@@ -44,11 +46,9 @@ private:
     Curve* query_curve_m_n;
 
 public:
-    DistanceUnitTest(string name) : CppUnit::TestCase(name) {}
-    ~DistanceUnitTest();
 
     void setUp();
-    void discrete_distance();
+    void test_discrete_distance();
 };
 
 
