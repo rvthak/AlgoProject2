@@ -19,6 +19,7 @@
 #include "cppunit/TestCaller.h"
 #include "cppunit/TestSuite.h"
 #include "cppunit/TestResult.h"
+#include "cppunit/ui/text/TestRunner.h"
 
 #include "DistanceUnitTest.h"
 
@@ -30,17 +31,12 @@ int main(int argc, char *argv[])
 	// Enter the main program loop
 	while (running)
 	{
-		CppUnit::TestSuite suite;
-		// CppUnit::TestResult result;
+		CppUnit::TextUi::TestRunner runner;
 
-		cout << "Going to initialize test" << endl;
-		CppUnit::TestCaller<DistanceUnitTest> test("test_discrete_distance", &DistanceUnitTest::test_discrete_distance);
-		CppUnit::TestResult result;
+		runner.addTest(DistanceUnitTest::suite());
 
-		cout << "Going to run test" << endl;
-		test.run(&result);
+		runner.run();
 
-		// Ask user if he wants to stop the program
 		running = !question(" Would you like to exit the program?");
 	}
 

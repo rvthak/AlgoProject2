@@ -42,10 +42,12 @@ private:
     Curve* query_curve_m_n;
 
 public:
-
+    static CppUnit::Test* suite();
     void setUp();
     void test_discrete_distance();
 };
+
+
 
 
 #endif
