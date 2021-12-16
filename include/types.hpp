@@ -26,7 +26,7 @@ class Point;
 class Curve;
 class Interval;
 
-// using Vector = Point;  // CHRIS CHANGE
+// using Vector = Point;
 using Vector_F = Point;
 using Intervals = std::vector<Interval>;
 using Coordinates = std::vector<coordinate_t>;

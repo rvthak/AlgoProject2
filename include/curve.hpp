@@ -164,6 +164,7 @@ public:
         return dim;
     }
     
+    
     Curves simplify(const curve_size_t, const bool);
     
     std::string str() const;
