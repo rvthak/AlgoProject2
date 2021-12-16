@@ -16,8 +16,6 @@ using namespace std;
 class DistanceUnitTest : public CppUnit::TestFixture
 {
 private:
-
-    double max_distance_offset = MAX_DISTANCE_OFFSET;
     
     Vector* input_vector_1_1;
     Vector* query_vector_1_1;
