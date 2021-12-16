@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "DistanceUnitTest.h"
 #include "cppunit/TestCase.h"
 
@@ -17,17 +18,30 @@ void DistanceUnitTest::setUp()
     // VectorArray input_vecs("./datasets/nasd_input.csv");
 	// VectorArray query_vecs("./datasets/nasd_query.csv");
 
-	this->input_vector_1_1 = &input_vecs.array[0];
-	this->query_vector_1_1 = &query_vecs.array[0];
+    std::cout << "Started setup" << std::endl;
 
-    this->input_vector_1_2 = &input_vecs.array[1];
-	this->query_vector_1_2 = &query_vecs.array[1];
+    vector<double> input_v_1_1 {34.5};
+    vector<double> query_v_1_1 {83.4};
 
-    this->input_vector_2_1 = &input_vecs.array[2];
-	this->query_vector_2_1 = &query_vecs.array[2];
 
-    this->input_vector_m_n = &input_vecs.array[3];
-	this->query_vector_m_n = &query_vecs.array[3];
+
+    Vector input_vector_1_1(input_v_1_1);
+        std::cout << "Initialized vector" << std::endl;
+
+	this->input_vector_1_1 = &input_vector_1_1; 
+    std::cout << "Initialized vector" << std::endl;
+	
+    
+    // this->query_vector_1_1->vec(query_v_1_1);
+
+    // this->input_vector_1_2 = &input_vecs.array[1];
+	// this->query_vector_1_2 = &query_vecs.array[1];
+
+    // this->input_vector_2_1 = &input_vecs.array[2];
+	// this->query_vector_2_1 = &query_vecs.array[2];
+
+    // this->input_vector_m_n = &input_vecs.array[3];
+	// this->query_vector_m_n = &query_vecs.array[3];
 
     this->input_curve_1_1 = this->input_vector_1_1->create_Curve();
     this->query_curve_1_1 = this->query_vector_1_1->create_Curve();

@@ -17,6 +17,9 @@ class DistanceUnitTest : public CppUnit::TestFixture
 {
 private:
     
+    vector<double> input_v_1_1 {34.5};
+    vector<double> query_v_1_1 {83.4};
+    
     Vector* input_vector_1_1;
     Vector* query_vector_1_1;
 
