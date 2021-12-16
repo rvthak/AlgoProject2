@@ -33,9 +33,11 @@ int main(int argc, char *argv[])
 		CppUnit::TestSuite suite;
 		// CppUnit::TestResult result;
 
+		cout << "Going to initialize test" << endl;
 		CppUnit::TestCaller<DistanceUnitTest> test("test_discrete_distance", &DistanceUnitTest::test_discrete_distance);
 		CppUnit::TestResult result;
 
+		cout << "Going to run test" << endl;
 		test.run(&result);
 
 		// Ask user if he wants to stop the program
