@@ -3,6 +3,7 @@
 
 CC=g++
 CFLAGS=-Wall -Iinclude -fopenmp
+TESTFLAGS=
 
 INPUT_FILE=./datasets/nasd_input.csv
 QUERY_FILE=./datasets/nasd_query.csv
@@ -27,10 +28,10 @@ VGFLAGS=--leak-check=full --show-leak-kinds=all --leak-resolution=high --track-o
 all: $(OUT_SEARCH)
 
 $(OUT_SEARCH): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) /usr/lib/x86_64-linux-gnu/libcppunit.a -o $@
 
 ./obj/%.o: ./src/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDLIBS) -c $< -o $@
 
 clean:
 	$(RM) -r ./bin/* ./obj/*
@@ -50,6 +51,9 @@ disc: $(OUT_SEARCH)
 	$(OUT_SEARCH) $(RUNFLAGS_SEARCH_DIS)
 
 cont: $(OUT_SEARCH)
+	$(OUT_SEARCH) $(RUNFLAGS_SEARCH_CON)
+
+test: $(OUT_SEARCH)
 	$(OUT_SEARCH) $(RUNFLAGS_SEARCH_CON)
 
 #--------------------------------------------------------------------------

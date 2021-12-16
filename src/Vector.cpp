@@ -16,6 +16,13 @@ using namespace std;
 
 Vector::Vector(){ this->id = 0; this->centroid = nullptr; this->name = ""; }
 
+Vector::Vector(std::vector<double> v){
+	this->vec = v;
+	this->id = 0; 
+	this->centroid = nullptr; 
+	this->name = ""; 
+}
+
 // Prints all the data stored in a Vector
 void Vector::print(){
 	cout << " Id: " << this->id << ", Name: " << this->name << endl << "   > ";
@@ -225,7 +232,7 @@ void VectorArray::parse_input(string filename){
 }
 
 // Naive search for the k Nearest Neighbors of the given query Vector
-void *VectorArray::kNN_naive(Vector *query, unsigned k){
+void *VectorArray::kNN_naive(Vector *query, unsigned k, unsigned mode){
 
 	// The naive approach to solving the k Nearest Neighbors problem is
 	// to just check all the distances and keep the shortest ones
@@ -234,7 +241,13 @@ void *VectorArray::kNN_naive(Vector *query, unsigned k){
 	// and in the end we have the k nearest Vectors stored in the list
 	ShortedList *list = new ShortedList(k);
 	for(unsigned i=0; i<(this->size); i++){
-		list->add( &((this->array)[i]), query->l2( &((this->array)[i]) ) );
+		if( mode == 0 ){
+			list->add( &((this->array)[i]), query->l2( &((this->array)[i]) ) );
+		} else if( mode == 1 ){
+			list->add( &((this->array)[i]), query->discrete_frechet_distance( &((this->array)[i]) ) );
+		} else{
+			list->add( &((this->array)[i]), query->continuous_frechet_distance( &((this->array)[i]) ) );
+		}
 	}
 	return list;
 } // (!) Remember to free the returned list afterwards

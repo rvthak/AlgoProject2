@@ -16,6 +16,7 @@ struct Vector{
 	std::string name;		// The id-name of the Vector
 
 	Vector();
+	Vector(std::vector<double> v);
 
 	void print();			// Print the Vector Contents
 	unsigned size();		// Returns the size of the Vector
@@ -36,7 +37,7 @@ struct VectorArray{
 	VectorArray(std::string filename);
 	~VectorArray();
 
-	void *kNN_naive(Vector *query, unsigned k);
+	void *kNN_naive(Vector *query, unsigned k, unsigned mode);
 	void print();	// Print all the Vectors of the Array
 
 	int add_vector(unsigned index, int id, std::string name, std::vector<double> data);
