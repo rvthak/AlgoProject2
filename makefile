@@ -58,7 +58,7 @@ test: $(OUT_SEARCH)
 
 #--------------------------------------------------------------------------
 
-VG_RUNFLAGS=$(RUNFLAGS_SEARCH_LSH)
+VG_RUNFLAGS=$(RUNFLAGS_SEARCH_DIS)
 
 vg_search: $(OUT_SEARCH)
 	valgrind $(OUT_SEARCH) $(VG_RUNFLAGS)
