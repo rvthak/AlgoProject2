@@ -283,7 +283,7 @@ double euclidian_distance(double x1, double y1, double x2, double y2){
 
 // Allocate a table[width][height] containing doubles
 double **new_2D_table(unsigned width, unsigned height){
-	cout << "Width : " << width << " Height : " << height << endl;
+	// cout << "Width : " << width << " Height : " << height << endl;
 	double **table = new double *[width];
 
 	for(unsigned i=0; i<width; i++){
