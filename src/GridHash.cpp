@@ -69,6 +69,9 @@ Vector *GridHash::hash_1D(Vector *vec, double t){
 	// Keep only local minima and maxima
 	curve.minima_maxima();
 
+	// Add padding if needed
+	curve.add_padding();
+
 	// Vectorize the VCurve into a key Vector
 	return curve.vectorize();
 }
