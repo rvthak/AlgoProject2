@@ -49,6 +49,9 @@ double Vector::l2(Vector *p){
 // Returns the discrete frechet distance between the two vectors
 double Vector::discrete_frechet_distance(Vector *p){
 
+	cout << "v argument size : " << this->vec.size() << endl;
+	cout << "p argument size : " << p->vec.size() << endl;  
+
 	// Create two tables of size 'm x n' where 'm' and 'n' are the sizes of the two Vectors
 	// 'c' is used to compute the discrete Frechet Distance
 	double **c = new_2D_table(this->size(), p->size());
