@@ -9,8 +9,6 @@
 #include "VCurve.h"
 #include "curve.hpp"
 
-#define MAX_DISTANCE_OFFSET 200.0  // CHRIS 13.12.2021 START
-
 #pragma once
 
 using namespace std;

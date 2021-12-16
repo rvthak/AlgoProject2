@@ -54,14 +54,8 @@ void DistanceUnitTest::test_discrete_distance()
     double distance_chris_m_n = this->input_vector_m_n->discrete_frechet_distance(this->query_vector_m_n);
     double distance_fred_m_n = Frechet::Discrete::distance(*this->input_curve_m_n, *this->query_curve_m_n).value;
 
-    
-    double distance_offset_1_1 = abs(distance_chris_1_1 - distance_fred_1_1);
-    double distance_offset_1_2 = abs(distance_chris_1_2 - distance_fred_1_2);
-    double distance_offset_2_1 = abs(distance_chris_2_1 - distance_fred_2_1);
-    double distance_offset_m_n = abs(distance_chris_m_n - distance_fred_m_n);
-
-    CPPUNIT_ASSERT(distance_offset_1_1 <= this->max_distance_offset);
-    CPPUNIT_ASSERT(distance_offset_1_2 <= this->max_distance_offset);
-    CPPUNIT_ASSERT(distance_offset_2_1 <= this->max_distance_offset);
-    CPPUNIT_ASSERT(distance_offset_m_n <= this->max_distance_offset);
+    CPPUNIT_ASSERT(distance_chris_1_1 == distance_fred_1_1);
+    CPPUNIT_ASSERT(distance_chris_1_2 == distance_fred_1_2);
+    CPPUNIT_ASSERT(distance_chris_2_1 == distance_fred_2_1);
+    CPPUNIT_ASSERT(distance_chris_m_n == distance_fred_m_n);
 }
