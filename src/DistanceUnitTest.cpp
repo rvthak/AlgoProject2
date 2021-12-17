@@ -31,8 +31,6 @@ void DistanceUnitTest::test_discrete_distance_1_1()
     double distance_chris_1_1 = this->input_vector_1_1->discrete_frechet_distance(this->query_vector_1_1);
     double distance_fred_1_1 = Frechet::Discrete::distance(*this->input_curve_1_1, *this->query_curve_1_1).value;
 
-    cout << "distance_chris_1_1 : " << distance_chris_1_1 << endl << "distance_fred_1_1 : " << distance_fred_1_1 << endl;
-
     CPPUNIT_ASSERT(distance_chris_1_1 == distance_fred_1_1);
 }
 
@@ -53,8 +51,6 @@ void DistanceUnitTest::test_discrete_distance_1_2()
     double distance_chris_1_2 = this->input_vector_1_2->discrete_frechet_distance(this->query_vector_1_2);
     double distance_fred_1_2 = Frechet::Discrete::distance(*this->input_curve_1_2, *this->query_curve_1_2).value;
 
-    cout << "distance_chris_1_2 : " << distance_chris_1_2 << endl << "distance_fred_1_2 : " << distance_fred_1_2 << endl;
-
     CPPUNIT_ASSERT(distance_chris_1_2 == distance_fred_1_2);
 }  
 
@@ -72,11 +68,8 @@ void DistanceUnitTest::test_discrete_distance_2_1()
     this->input_curve_2_1 = this->input_vector_2_1->create_Curve();
     this->query_curve_2_1 = this->query_vector_2_1->create_Curve();
 
-
     double distance_chris_2_1 = this->input_vector_2_1->discrete_frechet_distance(this->query_vector_2_1);
     double distance_fred_2_1 = Frechet::Discrete::distance(*this->input_curve_2_1, *this->query_curve_2_1).value;
-
-    cout << "distance_chris_2_1 : " << distance_chris_2_1 << endl << "distance_fred_2_1 : " << distance_fred_2_1 << endl;
     
     CPPUNIT_ASSERT(distance_chris_2_1 == distance_fred_2_1);
 }
@@ -98,8 +91,6 @@ void DistanceUnitTest::test_discrete_distance_m_n()
 
     double distance_chris_m_n = this->input_vector_m_n->discrete_frechet_distance(this->query_vector_m_n);
     double distance_fred_m_n = Frechet::Discrete::distance(*this->input_curve_m_n, *this->query_curve_m_n).value;
-
-    cout << "distance_chris_m_n : " << distance_chris_m_n << endl << "distance_fred_m_n : " << distance_fred_m_n << endl;
 
     CPPUNIT_ASSERT(distance_chris_m_n == distance_fred_m_n);
 }
