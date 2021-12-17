@@ -43,7 +43,6 @@ private:
 
 public:
     static CppUnit::Test* suite();
-    // void setUp();
     void test_discrete_distance_1_1();
     void test_discrete_distance_1_2();
     void test_discrete_distance_2_1();
