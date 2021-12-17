@@ -68,8 +68,8 @@ double Vector::discrete_frechet_distance(Vector *p){
 	}
 
 	// Use the distances to calculate the Frechet distance
-	for(unsigned i=1; i<(this->size()); i++){
-		for(unsigned j=1; j<(p->size()); j++){
+	for(unsigned i=0; i<(this->size()); i++){
+		for(unsigned j=0; j<(p->size()); j++){
 			if( (i==0)&&(j==0) ){
 				c[i][j] = dist[i][j];
 			} else if( i==0 ){

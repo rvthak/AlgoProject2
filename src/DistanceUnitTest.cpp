@@ -84,7 +84,7 @@ void DistanceUnitTest::test_discrete_distance_2_1()
 void DistanceUnitTest::test_discrete_distance_m_n()
 {
 
-    vector<double> input_v_m_n { 56.3, 03.2, 78.2, 67.1 };
+    vector<double> input_v_m_n { 56.3, 03.2, 78.2, 67.1, 31,4 };
     vector<double> query_v_m_n { 67.2, 18.4, 32.8, 59.2, 67.3, 90.2, 41.5 };
 
     Vector input_vector_m_n(input_v_m_n);
