@@ -120,9 +120,6 @@ void Hypercube::iterate_bucket(Bucket* bucket, Vector* query_vector)
 {
 	Bucket_node *current_bucket_node = bucket->first;
 
-	// TODO : Uncomment line bellow
-	// if (current_bucket_node == nullptr) cout << "nullptr!!" << endl;
-
 	while (current_bucket_node != nullptr)
 	{
 		// Get each vector of the bucket & the L2 distance to the query vector

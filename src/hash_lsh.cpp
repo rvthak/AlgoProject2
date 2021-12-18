@@ -32,7 +32,6 @@ HashTable::~HashTable(){
 int HashTable::add(Vector *vec){
 	unsigned long id = this->g->ID(vec);
 	unsigned long key = mod(id, g->tableSize);
-	//std::cout << " KEY: " << key << ", ID: " << id << std::endl;
 	return (this->bucs)[key].add(vec, id);
 }
 
@@ -40,7 +39,6 @@ int HashTable::add(Vector *vec){
 int HashTable::add(Vector *vec, Vector *key){
 	unsigned long id = this->g->ID(key);
 	unsigned long index = mod(id, g->tableSize);
-	//std::cout << " Index: " << index << ", ID: " << id << std::endl;
 	return (this->bucs)[index].add(vec, id);
 }
 
@@ -64,7 +62,6 @@ double HashTable::averageBucketSize(){
 
 // Allocate L hash tables, and set their hash functions to use k "h" sub-hash-functions
 MultiHash::MultiHash(int k, int L, unsigned tableSize, unsigned v_size){
-	//std::cout << " Creating Multihash > k: " << k << ", L: " << L << ", TableSize: " << tableSize << ", VectorSize: " << v_size << std::endl;
 	// Allocate the Hash tables
 	if( (this->array = new HashTable*[L]) == nullptr ){ 
 		std::cout << "\033[31;1m (!) Fatal Error:\033[0m MultiHash Built : Failed to allocate memory." << std::endl;
@@ -118,7 +115,6 @@ void MultiHash::loadVectors(VectorArray *arr){
 void MultiHash::loadVectors(AssignmentArray *arr){
 	// Add each vector to all the Hash tables
 	for(unsigned i=0; i<(arr->size); i++){
-		//std::cout << " > id: " << (arr->array)[i].id << std::endl;
 		this->add( &((arr->array)[i]) );
 	}
 }
@@ -131,10 +127,8 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 	Bucket *bucket;
 	ShortedList *list = new ShortedList(k);
 
-	//std::cout << " > Query id: " << query->id << std::endl;
 	// For each existing Hash Table
 	for(unsigned i=0; i<(this->amount); i++){
-		//std::cout << "\tSearching HT[" << i+1 << "]" << std::endl;
 		id_matches=0;
 
 		// Calculate the ID of the query vector
@@ -150,7 +144,6 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 
 			// Only check Vectors with the same ID to avoid computing unnecessary distances
 			if( cur->ID == ID ){
-				//std::cout << " Id found" << std::endl;
 				list->add( cur->data, query->l2(cur->data));
 				id_matches++;
 			}

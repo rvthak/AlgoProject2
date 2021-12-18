@@ -7,8 +7,6 @@
 using namespace std;
 
 GridHash::GridHash(double delta, unsigned grid_amount, unsigned dim, int k, unsigned tableSize, unsigned v_size){
-	//cout << " Creating " << grid_amount << " Grids for hashing." << endl;
-
 	if( dim!=1 && dim!=2 ){
 		cout << "(!) Fatal Error: Unsupported Projection dimention given. Shutting down" << endl;
 		exit(1);
@@ -20,7 +18,6 @@ GridHash::GridHash(double delta, unsigned grid_amount, unsigned dim, int k, unsi
 	for(unsigned i=0; i<grid_amount; i++){
 		(this->grid_t).push_back(uniform_distribution_real(0, delta-0.000001));
 		// Used '0.000001' to simulate excluding delta itself from the results
-		//cout << " " << (this->grid_t)[i] << endl;
 	}
 
 	// Create a Multihash Struct for each
@@ -124,7 +121,6 @@ ShortedList *GridHash::disc_NN_lsh(Vector *query){
 
 			// Only check Vectors with the same ID to avoid computing unnecessary distances
 			if( cur->ID == ID ){
-				//std::cout << " Id found" << std::endl;
 				list->add( cur->data, query->discrete_frechet_distance(cur->data));
 				id_matches++;
 			}
@@ -178,7 +174,6 @@ ShortedList *GridHash::cont_NN_lsh(Vector *query){
 
 			// Only check Vectors with the same ID to avoid computing unnecessary distances
 			if( cur->ID == ID ){
-				//std::cout << " Id found" << std::endl;
 				list->add( cur->data, query->continuous_frechet_distance(cur->data));
 				id_matches++;
 			}
@@ -200,7 +195,6 @@ ShortedList *GridHash::cont_NN_lsh(Vector *query){
 // Add all the Vectors from the given VectorArray
 void GridHash::loadVectors(VectorArray *arr){
 	for(unsigned i=0; i<(arr->size); i++){
-		//cout << " Loading Vector: " << (arr->array)[i].name << endl;
 		this->add( &((arr->array)[i]) );
 	}
 }
@@ -208,7 +202,6 @@ void GridHash::loadVectors(VectorArray *arr){
 // Add all the Vectors from the given AssignmentArray
 void GridHash::loadVectors(AssignmentArray *arr){
 	for(unsigned i=0; i<(arr->size); i++){
-		//cout << " Loading Vector: " << (arr->array)[i].name << endl;
 		this->add( &((arr->array)[i]) );
 	}
 }

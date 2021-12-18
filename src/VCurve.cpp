@@ -32,8 +32,6 @@ Vector *VCurve::vectorize(){
 		(vec->vec).push_back( (this->x)[i] );
 		(vec->vec).push_back( (this->y)[i] );
 	}
-
-	//cout << vec->size() << endl;
 	
 	return vec;
 }
@@ -101,7 +99,6 @@ void VCurve::remove_duplicates(){
 
 	for(unsigned i=1; i<(this->size()); i++){
 		if( (this->x)[i]==(this->x)[i-1] && (this->y)[i]==(this->y)[i-1] ){ 
-			//cout << " REMOVED" << endl;
 			continue; }
 		x.push_back( (this->x)[i] );
 		y.push_back( (this->y)[i] );

@@ -41,7 +41,6 @@ int ShortedList::add(Vector *v, double dist){
 		this->first = new SL_Node(v, dist);
 		this->last = this->first;
 		(this->cur_len)++;
-		//std::cout << " Empty => New First " << std::endl;
 		return 0;
 	}
 
@@ -51,23 +50,19 @@ int ShortedList::add(Vector *v, double dist){
 		// If the last item is smaller than the new one
 		if( this->last->dist < dist ){
 			// No point in storing the new Vector, it is not a part of the top 'k'
-			//std::cout << " 1.Larger than last " << std::endl;
 			return 1;
 		}
 
 		// If the Vector is already in the List, dont add it again
-		//std::cout << " 1.Existence Check " << std::endl;
 		if( this->exists(v, dist) ){ return 1; }
 
 		// The new Vector is one of the top 'k' =>
 		// Remove the largest Vector (the last one) to free up space
 		this->delete_last();
-		//std::cout << " 1.Deleted last " << std::endl;
 	}
 	else{ // The list is not full
 		// If the Vector is already in the List, dont add it again
 		if( this->exists(v, dist) ){ return 1; }
-		//std::cout << " 2.Existence Check " << std::endl;
 	}
 
 	// Add the New Vector in the correct location
@@ -93,20 +88,17 @@ int ShortedList::add(Vector *v, double dist){
 			this->first->next = tmp;
 			tmp->prev = this->first;
 		}
-		//std::cout << " New First " << std::endl;
 	}
 	else if( cur == nullptr ){	// New last item
 		this->last = new SL_Node(v, dist);
 		this->last->prev = prev;
 		prev->next = this->last;
-		//std::cout << " New Last " << std::endl;
 	}
 	else{	// New item in between
 		prev->next = new SL_Node(v, dist);
 		prev->next->prev = prev;
 		prev->next->next = cur;
 		cur->prev = prev->next;
-		//std::cout << " New between " << std::endl;
 	}
 	(this->cur_len)++;
 

@@ -60,7 +60,6 @@ int main(int argc, char *argv[]){
 		// Load both the input and query file data
 		VectorArray input_vecs(args.input_file);
 		VectorArray query_vecs(args.query_file);
-		//query_vecs.print();
 
 		// Build the user-selected Data structures
 		MultiHash *lsh  = nullptr;

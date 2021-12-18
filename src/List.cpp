@@ -18,7 +18,6 @@ List::List(){
 
 // Just delete all the elements of the list (if any) 
 List::~List(){
-	//std::cout << " FIRST: " << this->first << std::endl;
 	List_node *cur = this->first, *tmp;
 	while( (tmp=cur) != nullptr ){
 		cur = cur->next;

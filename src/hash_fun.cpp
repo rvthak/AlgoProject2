@@ -31,8 +31,6 @@ G::G(int k, unsigned tableSize, unsigned v_size){
 	this->k = k;
 	this->tableSize = tableSize;
 
-	//std::cout << " Created G containing: " << std::endl;
-
 	// Generate uniform random values for k "r"s
 	this->r = new unsigned[k];
 	if( this->r == nullptr ){
@@ -41,7 +39,6 @@ G::G(int k, unsigned tableSize, unsigned v_size){
 	}
 	for(int i=0; i<k; i++){ 
 		(this->r)[i] = uniform_distribution(1, MAX_R); 
-		//std::cout << " r[" << i << "] = " << (this->r)[i] << std::endl;
 	}
 
 	// Generate k random "h" functions
