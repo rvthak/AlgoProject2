@@ -489,7 +489,7 @@ void ARGS_Cluster::print(){
 }
 
 //------------------------------------------------------------------------------------------------------------------
-// SEARCH ARGS
+// Frechet Search ARGS
 //------------------------------------------------------------------------------------------------------------------
 
 #define FRECHET_DEFAULT_L 4
@@ -731,5 +731,159 @@ void ARGS_Search::print(){
 	printf( "\033[33;1m| metric: \033[0m%-75s \033[33;1m|\033[0m\n", (this->metric).c_str());
 	printf( "\033[33;1m| delta:  \033[0m%-75.2f \033[33;1m|\033[0m\n", this->delta);
 	printf( "\033[33;1m| notTrue: \033[0m%-74d \033[33;1m|\033[0m\n", (int)(this->notTrue) );
+	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
+}
+
+//------------------------------------------------------------------------------------------------------------------
+// 2D Curve Clustering ARGS
+//------------------------------------------------------------------------------------------------------------------
+
+// Read any given initial terminal arguments and store them
+void ARGS_Curve_Cluster::read_terminal(int argc, char *argv[]){
+
+	// Get the argument values
+	for(int i=1; i<argc; i++){
+
+		// Check the argument flag first, then get the value
+		if( strcmp(argv[i],"-i")==0 ){
+			i++;
+			this->input_file = string(argv[i]);
+			arg_file_exists("input_file", this->input_file);
+		}
+		else if(strcmp(argv[i],"-c")==0){
+			i++;
+			this->config_file = string(argv[i]);
+			arg_file_exists("config_file", this->config_file);
+
+			// Load Config file data
+			this->load_config(this->config_file);
+		}
+		else if(strcmp(argv[i],"-o")==0){
+			i++;
+			this->output_file = string(argv[i]);
+			// We do not check if the output file exists or not
+			// We just clear any existing contents
+			clearContents(this->output_file);
+		}
+
+		else if(strcmp(argv[i],"-update")==0){
+			i++;
+			if( string(argv[i]) != "Mean" ){ error_arg("update"); }
+
+			i++;
+			this->update = string(argv[i]);
+			if( !(this->update == "Frechet") && 
+				!(this->update == "Vector") )
+			{ error_arg("update"); }
+		}
+		else if(strcmp(argv[i],"-assignment")==0){
+			i++;
+			this->assignment = string(argv[i]);
+			if( !(this->assignment == "Classic") && 
+				!(this->assignment == "LSH") && 
+				!(this->assignment == "Hypercube") )
+			{ error_arg("assignment"); }
+		}
+
+		else if(strcmp(argv[i],"-complete")==0){
+			this->complete = true;
+		}
+		else if(strcmp(argv[i],"-silhouette")==0){
+			this->silhouette = true;
+		}
+		// In case we dont get a known flag/string error
+		else {
+			cout <<"\033[31;1m (!) Fatal Error:\033[0m Arg parsing : Unknown arg " << argv[i] << endl;
+			exit(1); 
+		}
+	}
+}
+
+// Check if the current "update" and "assignment" values are compatible
+void ARGS_Curve_Cluster::ensure_compatability(){
+	if( this->update == "Frechet" ){
+
+		if( this->assignment == "Hypercube"){
+			error_arg("update");
+		}
+	}
+}
+
+// Load the configuration values from the given file
+void ARGS_Curve_Cluster::load_config(std::string filename){
+
+	// Open the file as an ifstream
+	ifstream file(filename);
+	string line, word;
+	int val;
+	unsigned count=0; // The amount of lines read
+
+	// For each file line
+	while( getline(file, line) ){
+		count++;
+
+		// Convert the line into a stream for easier parsing
+		istringstream line_stream(line);
+
+		// Get the first word (== the parameter name)
+		line_stream >> word;
+
+		// Read its value
+		if( !(line_stream >> val) ){ error_config(count); }
+
+		// And load its value in the correct variable
+		if( word == "number_of_clusters:" ){
+			this->k = val;
+		}
+		// Allow the Variables that can default values available to not exist in the config file
+		else if( word == "number_of_vector_hash_tables:" ){
+			this->L = val;
+		}
+		else if( word == "number_of_vector_hash_functions:" ){
+			this->k_lsh = val;
+		}
+		else if( word == "max_number_M_hypercube:" ){
+			this->M = val;
+		}
+		else if( word == "number_of_hypercube_dimensions:" ){
+			this->k_cube = val;
+		}
+		else if( word == "number_of_probes:" ){
+			this->probes = val;
+		}
+		// Unknown Parameter => Error
+		else{ error_config(); }
+	}
+
+	// We don't have a deafult value for k => Error
+	if( this->k == EMPTY_INT){ error_missing("k"); }
+}
+
+// Fill "Empty" args with default values where possible
+void ARGS_Curve_Cluster::load_defaults(){
+	if( this->L      == EMPTY_INT ){ this->L      = CLUSTER_DEFAULT_L; }
+	if( this->k_lsh  == EMPTY_INT ){ this->k_lsh  = CLUSTER_DEFAULT_K_LSH; }
+	if( this->M      == EMPTY_INT ){ this->M      = CLUSTER_DEFAULT_M; }
+	if( this->k_cube == EMPTY_INT ){ this->k_cube = CLUSTER_DEFAULT_K_CUBE; }
+	if( this->probes == EMPTY_INT ){ this->probes = CLUSTER_DEFAULT_PROBES; }
+}
+
+// Print the curent args
+void ARGS_Curve_Cluster::print(){
+	cout << "\033[33;1m _____________________________________________________________________________________\033[0m"  << endl;
+	cout << "\033[33;1m|                                                                                     |\033[0m" << endl;
+	printf( "\033[33;1m| input_file:  \033[0m%-70s \033[33;1m|\033[0m\n", (this->input_file).c_str());
+	printf( "\033[33;1m| config_file: \033[0m%-70s \033[33;1m|\033[0m\n", (this->config_file).c_str());
+	printf( "\033[33;1m| output_file: \033[0m%-70s \033[33;1m|\033[0m\n", (this->output_file).c_str());
+	printf( "\033[33;1m| update:      \033[0m%-70s \033[33;1m|\033[0m\n", (this->update).c_str());
+	printf( "\033[33;1m| assignment:  \033[0m%-70s \033[33;1m|\033[0m\n", (this->assignment).c_str());
+	printf( "\033[33;1m| complete:    \033[0m%-70d \033[33;1m|\033[0m\n", (int)this->complete );
+	printf( "\033[33;1m| silhouette:  \033[0m%-70d \033[33;1m|\033[0m\n", (int)this->silhouette );
+	printf( "\033[33;1m| k:      \033[0m%-75d \033[33;1m|\033[0m\n", this->k);
+	printf( "\033[33;1m| L:      \033[0m%-75d \033[33;1m|\033[0m\n", this->L);
+	printf( "\033[33;1m| k_lsh:  \033[0m%-75d \033[33;1m|\033[0m\n", this->k_lsh);
+	printf( "\033[33;1m| M:      \033[0m%-75d \033[33;1m|\033[0m\n", this->M);
+	printf( "\033[33;1m| k_cube: \033[0m%-75d \033[33;1m|\033[0m\n", this->k_cube);
+	printf( "\033[33;1m| probes: \033[0m%-75d \033[33;1m|\033[0m\n", this->probes);
 	cout << "\033[33;1m|_____________________________________________________________________________________|\033[0m" << endl << endl;
 }
