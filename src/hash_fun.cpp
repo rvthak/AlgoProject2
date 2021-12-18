@@ -108,6 +108,7 @@ F::~F(){
 	for(unsigned i = 0; i < (this->k); i++){
 		delete (this->h)[i];
 	}
+	delete [] (this->h);
 }
 
 unsigned F::hash(Vector *p){
