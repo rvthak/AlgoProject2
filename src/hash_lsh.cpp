@@ -170,7 +170,7 @@ ShortedList *MultiHash::kNN_lsh(Vector *query, unsigned k){
 }
 
 // Range search for the k approximate Nearest Neighbors of the given query Vector
-List *MultiHash::range_search(Vector *query, double R){
+List *MultiHash::range_search(Vector *query, double R, VecDist distfun){
 	long key;
 	long ID;
 	double dist;
@@ -191,7 +191,7 @@ List *MultiHash::range_search(Vector *query, double R){
 		Bucket_node *cur = bucket->first;
 		while( cur != nullptr ){
 			if( cur->ID == ID ){
-				if( (dist = query->l2(cur->data)) <= R ){
+				if( (dist = (query->*distfun)(cur->data)) <= R ){
 					list->add( cur->data);
 				}
 			}
