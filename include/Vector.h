@@ -16,15 +16,21 @@ struct Vector{
 	std::string name;		// The id-name of the Vector
 
 	Vector();
+	Vector(std::vector<double> v);
 
-	void print();			// Print the Vector Contents
-	unsigned size();		// Returns the size of the Vector
-	double l2(Vector *p);	// Returns the l2 norm between the two vectors
-	Curve* create_Curve();	// Create a Curve representation of the given Vector
+	void print();				// Print the Vector Contents
+	unsigned size();			// Returns the size of the Vector
+	Curve* create_Curve();		// Create a 2D Curve representation of the given Vector
+	Curve* create_Curve_1D();	// Create a 1D Curve representation of the given Vector
 
-	double discrete_frechet_distance(Vector *p);	// Returns the discrete frechet distance between the two vectors
-	double continuous_frechet_distance(Vector *p);	// Returns the continuous frechet distance between the two vectors
+	double l2(Vector *p);		// Returns the l2 norm between the two vectors
+	double discrete_frechet_distance(Vector *p);		// Returns the discrete frechet distance between the two vectors
+	double discrete_frechet_distance_fred(Vector *p);	// Discrete Frechet but using Fred Lib (Used for testing only)
+	double continuous_frechet_distance(Vector *p);		// Returns the continuous frechet distance between the two vectors
 };
+
+// Define a Vector member function type for the Distance functions in Vector
+typedef double (Vector::*VecDist)(Vector *);
 
 // Array Struct Used to parse and store Vectors
 struct VectorArray{
@@ -93,6 +99,8 @@ struct AssignmentArray{
 	~AssignmentArray();
 
 	void update_centroids(CentroidArray *cent);
+	void update_curve_centroids(CentroidArray *cent);
+
 	void reset_clusters();
 	void assign(unsigned id, Centroid *centroid, double dist);
 	void print();	// Print all the Vector-Centroid-distance pairs

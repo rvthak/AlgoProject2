@@ -17,6 +17,14 @@ using namespace std;
 
 Vector::Vector(){ this->id = 0; this->centroid = nullptr; this->name = ""; }
 
+Vector::Vector(std::vector<double> v){
+	this->vec = v;
+	this->id = 0; 
+	this->centroid = nullptr; 
+	this->name = "";
+	// cout << "this->size() : " << this->size() << endl;
+}
+
 // Prints all the data stored in a Vector
 void Vector::print(){
 	cout << " Id: " << this->id << ", Name: " << this->name << endl << "   > ";
@@ -58,8 +66,8 @@ double Vector::discrete_frechet_distance(Vector *p){
 	}
 
 	// Use the distances to calculate the Frechet distance
-	for(unsigned i=1; i<(this->size()); i++){
-		for(unsigned j=1; j<(p->size()); j++){
+	for(unsigned i=0; i<(this->size()); i++){
+		for(unsigned j=0; j<(p->size()); j++){
 			if( (i==0)&&(j==0) ){
 				c[i][j] = dist[i][j];
 			} else if( i==0 ){
@@ -80,38 +88,39 @@ double Vector::discrete_frechet_distance(Vector *p){
 	delete_2D_table(dist, this->size());
 
 	return frechet;
+}
 
-	// // Get a Curve representation of each Vector
-	// Curve *v1 = this->create_Curve();
-	// Curve *v2 = p->create_Curve();
+// Discrete Frechet from Fred lib
+double Vector::discrete_frechet_distance_fred(Vector *p){
+	Timer t;
 
-	// // Get their continuous frechet distance
-	// Frechet::Discrete::Distance fre_dist = Frechet::Discrete::distance(*v1, *v2);
+	// Get a Curve representation of each Vector
+	Curve *v1 = this->create_Curve();
+	Curve *v2 = p->create_Curve();
 
-	// // Clean up
-	// delete v1; delete v2;
+	// Get their continuous frechet distance
+	Frechet::Discrete::Distance fre_dist = Frechet::Discrete::distance(*v1, *v2);
 
-	// return fre_dist.value;
+	// Clean up
+	delete v1; delete v2;
+
+	return fre_dist.value;
 }
 
 // Returns the continuous frechet distance between the two vectors
 // Uses Fred library
 double Vector::continuous_frechet_distance(Vector *p){
 	Timer t;
-
-	t.tic();
-	cout << endl << " Started: " << endl;
+	//cout << endl << " Started: " << endl; t.tic();
 
 	// Get a Curve representation of each Vector
-	Curve *v1 = this->create_Curve();
-	Curve *v2 = p->create_Curve();
-
-	cout << " Converted: " << t.toc() << endl; t.tic();
+	Curve *v1 = this->create_Curve_1D();
+	Curve *v2 = p->create_Curve_1D();
+	//cout << " Converted: " << t.toc() << endl; t.tic();
 
 	// Get their continuous frechet distance
 	Frechet::Continuous::Distance fre_dist = Frechet::Continuous::distance(*v1, *v2);
-
-	cout << " Dove: " << t.toc() << endl; 
+	//cout << " Done: " << t.toc() << endl; 
 
 	// Clean up
 	delete v1; delete v2;
@@ -132,6 +141,23 @@ Curve* Vector::create_Curve(){
 	for(unsigned i=0; i<(this->size()); i++){
 		p.set(0, i);
 		p.set(1, (this->vec)[i]);
+		c->push_back(p);
+	}
+	return c;
+}
+
+// Create a 1D Curve representation of the given Vector
+// Remember to free the returned curve after
+Curve* Vector::create_Curve_1D(){
+	// Create an empty curve with 2 dimentions
+	Curve* c = new Curve(1);
+
+	// Create a 2D Point - Used to push Vector pairs into 'c'
+	Point p(1);
+
+	// Write all the data of the given Vector to 'c'
+	for(unsigned i=0; i<(this->size()); i++){
+		p.set(0, (this->vec)[i]);
 		c->push_back(p);
 	}
 	return c;
@@ -262,15 +288,6 @@ void *VectorArray::kNN_naive(Vector *query, unsigned k, unsigned mode){
 			list->add( &((this->array)[i]), query->l2( &((this->array)[i]) ) );
 		} else if( mode == 1 ){
 			list->add( &((this->array)[i]), query->discrete_frechet_distance( &((this->array)[i]) ) );
-			
-			// double ours = query->discrete_frechet_distance( &((this->array)[i]) );
-			
-			// Curve *c1 = query->create_Curve();
-			// Curve *c2 = (this->array)[i].create_Curve();
-			// double fred = Frechet::Discrete::distance(*c1, *c2).value;
-			// if( ours != fred ){
-			// 	cout << " MISMATCH : (" << ++mis_count << "/" << ++tot_count << "): Ours=" << ours << ", Fred=" << fred <<  endl;
-			// }
 		} else{
 			list->add( &((this->array)[i]), query->continuous_frechet_distance( &((this->array)[i]) ) );
 		}
@@ -570,6 +587,34 @@ void AssignmentArray::parse_input(string filename){
 
 // Update the Centroid Values by calculating vector averages
 void AssignmentArray::update_centroids(CentroidArray *cent){
+	unsigned vec_size = (cent->array)[0].vec.vec.size();
+
+	cent->change = false;
+
+	// For each Centroid (== for each Cluster)
+	for(unsigned i=0; i<(cent->size); i++){
+
+		// If no Vectors are assigned to this Centroid => don't move it
+		if( (cent->array)[i].assignments.size() == 0 ){ continue; }
+
+		std::vector<double> mean(vec_size, 0);
+		std::vector<double> prev = (cent->array)[i].vec.vec;
+
+		// Sum all the vectors that belong to this cluster
+		for(unsigned j=0; j<( (cent->array)[i].assignments.size() ); j++){
+			mean = sum_vectors(&mean, &(((cent->array)[i].assignments[j])->vec) );
+		}
+		// And assign the new Cluster Centroid
+		(cent->array)[i].vec.vec = div_vector(&mean, (cent->array)[i].assignments.size() );
+
+		// If any centroid changes => update "changed" flag
+		if( !(prev == (cent->array)[i].vec.vec) ){ cent->change = true; }
+		//cout << " Updated: " << i << endl;
+		//(cent->array)[i].vec.print();
+	}
+}
+
+void AssignmentArray::update_curve_centroids(CentroidArray *cent){
 	unsigned vec_size = (cent->array)[0].vec.vec.size();
 
 	cent->change = false;
