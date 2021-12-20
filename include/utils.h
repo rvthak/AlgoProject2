@@ -49,4 +49,6 @@ double euclidian_distance(double x1, double y1, double x2, double y2);
 double **new_2D_table(unsigned width, unsigned height);
 void delete_2D_table(double **table, unsigned width);
 
+double average(double x, double y);
+
 #endif

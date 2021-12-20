@@ -299,3 +299,5 @@ void delete_2D_table(double **table, unsigned width){
 	for(unsigned i=0; i<width; i++){ delete [] table[i]; }; 
 	delete [] table;
 }
+
+double average(double x, double y){ return (x+y)/2; }
