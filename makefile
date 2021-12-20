@@ -2,8 +2,7 @@
 #--------------------------------------------------------------------------
 
 CC=g++
-CFLAGS=-Iinclude -fopenmp -O3
-FRED_FLAGS=-march=native -Ofast -static-libgcc -static-libstdc++ -std=c++14 -fpermissive -fPIC -ffast-math -fno-trapping-math -ftree-vectorize
+CFLAGS=-Iinclude -O3 #-fopenmp
 TESTLIB=/usr/lib/x86_64-linux-gnu/libcppunit.a
 
 INPUT_FILE=./datasets/nasd_input.csv
@@ -25,7 +24,7 @@ OUT_CLUSTR=./bin/cluster
 OUT_TEST=./bin/test
 
 COMPLETE_FLAG= #-complete
-SILHOUETTE_FLAG= #-silhouette
+SILHOUETTE_FLAG= -silhouette
 
 RUNFLAGS_SEARCH_LSH= -algorithm LSH -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
 RUNFLAGS_SEARCH_CUB= -algorithm Hypercube -o $(SEARCH_OUTPUT_FILE) -i $(INPUT_FILE) -q $(QUERY_FILE)
@@ -35,7 +34,7 @@ RUNFLAGS_SEARCH_CON= -algorithm Frechet -metric continuous -delta 1.618 -o $(SEA
 RUNFLAGS_CLUSTER_CLA_VEC= -update Mean Vector  -assignment Classic   -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
 RUNFLAGS_CLUSTER_CLA_FRE= -update Mean Frechet -assignment Classic   -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
 RUNFLAGS_CLUSTER_LSH_FRE= -update Mean Frechet -assignment LSH       -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
-RUNFLAGS_CLUSTER_LSH_VEC= -update Mean Vector  -assignment Classic   -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
+RUNFLAGS_CLUSTER_LSH_VEC= -update Mean Vector  -assignment LSH       -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
 RUNFLAGS_CLUSTER_HYPCUBE= -update Mean Vector  -assignment Hypercube -i $(INPUT_FILE) -c $(CONFIG_FILE) -o $(CLUSTER_OUTPUT_FILE) $(COMPLETE_FLAG) $(SILHOUETTE_FLAG)
 
 VGFLAGS=--leak-check=full --show-leak-kinds=all --leak-resolution=high --track-origins=yes
@@ -101,7 +100,7 @@ test: $(OUT_TEST)
 #--------------------------------------------------------------------------
 
 VG_EXEC=$(OUT_CLUSTR)
-VG_RUNFLAGS=$(RUNFLAGS_CLUSTER_LSH_FRE)
+VG_RUNFLAGS=$(RUNFLAGS_CLUSTER_CLA_VEC)
 
 vg: $(VG_EXEC)
 	valgrind $(VG_EXEC) $(VG_RUNFLAGS)
@@ -111,7 +110,7 @@ vgext: $(VG_EXEC)
 
 #--------------------------------------------------------------------------
 
-run: clavec
+run: lshfre
 
 .PHONY: clean all run lsh cube disc cont clavec clafre lshfre lshvec cubvec vg vgext
 
