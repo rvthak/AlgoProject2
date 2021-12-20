@@ -25,6 +25,13 @@ Vector::Vector(std::vector<double> v){
 	// cout << "this->size() : " << this->size() << endl;
 }
 
+Vector::Vector(std::vector<double> *v){
+	this->vec = *v;
+	this->id = 0; 
+	this->centroid = nullptr; 
+	this->name = "";
+}
+
 // Prints all the data stored in a Vector
 void Vector::print(){
 	cout << " Id: " << this->id << ", Name: " << this->name << endl << "   > ";
@@ -304,6 +311,10 @@ void Centroid::print(){
 	} cout << endl;
 }
 
+unsigned Centroid::size(){
+	return this->vec.size();
+}
+
 // Calculate the norm between "this" and p
 double Centroid::l2(Vector *p){
 	double tmp;
@@ -314,6 +325,48 @@ double Centroid::l2(Vector *p){
 		sum += tmp * tmp;
 	}
 	return sqrt(sum);
+}
+
+// Returns the discrete frechet distance between the two vectors
+double Centroid::discrete_frechet_distance(Vector *p){
+
+	// Create two tables of size 'm x n' where 'm' and 'n' are the sizes of the two Vectors
+	// 'c' is used to compute the discrete Frechet Distance
+	double **c = new_2D_table(this->size(), p->size());
+	
+	// 'dist' stores the euclidian_distance between every point of one Vector with every point of the other vector
+	double **dist = new_2D_table(this->size(), p->size());
+
+	// Calculate the distances and store them
+	for(unsigned i=0; i<(this->size()); i++){	// For every 2D point in Vector 'this'
+		for(unsigned j=0; j<(p->size()); j++){	// For every 2D point in Vector 'p'
+			dist[i][j] = euclidian_distance(i,(this->vec.vec)[i], j,(p->vec)[j]);
+		}
+	}
+
+	// Use the distances to calculate the Frechet distance
+	for(unsigned i=0; i<(this->size()); i++){
+		for(unsigned j=0; j<(p->size()); j++){
+			if( (i==0)&&(j==0) ){
+				c[i][j] = dist[i][j];
+			} else if( i==0 ){
+				c[i][j] = max( c[i][j-1], dist[i][j] );
+			} else if( j==0 ){
+				c[i][j] = max( c[i-1][j], dist[i][j] );
+			} else {
+				c[i][j] = max( min( min( c[i-1][j],c[i-1][j-1] ), c[i][j-1] ), dist[i][j] );
+			}
+		}
+	}
+
+	// Return the value of the last table cell == The Frechet distance
+	double frechet = c[(this->size())-1][(p->size())-1];
+
+	// Free the memory before returning
+	delete_2D_table(c, this->size());
+	delete_2D_table(dist, this->size());
+
+	return frechet;
 }
 
 // Copies the values of the given Vector to the Centroid
@@ -625,6 +678,8 @@ void AssignmentArray::update_curve_centroids(CentroidArray *cent){
 		// If no Vectors are assigned to this Centroid => don't move it
 		if( (cent->array)[i].assignments.size() == 0 ){ continue; }
 
+
+		// Calculate the new Centroid Curve
 		std::vector<double> mean(vec_size, 0);
 		std::vector<double> prev = (cent->array)[i].vec.vec;
 
@@ -634,6 +689,7 @@ void AssignmentArray::update_curve_centroids(CentroidArray *cent){
 		}
 		// And assign the new Cluster Centroid
 		(cent->array)[i].vec.vec = div_vector(&mean, (cent->array)[i].assignments.size() );
+
 
 		// If any centroid changes => update "changed" flag
 		if( !(prev == (cent->array)[i].vec.vec) ){ cent->change = true; }

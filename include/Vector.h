@@ -17,6 +17,7 @@ struct Vector{
 
 	Vector();
 	Vector(std::vector<double> v);
+	Vector(std::vector<double> *v);
 
 	void print();				// Print the Vector Contents
 	unsigned size();			// Returns the size of the Vector
@@ -61,9 +62,15 @@ struct Centroid{
 
 	void print();				// Print the Vector Contents
 	double l2(Vector *p);		// Returns the l2 norm between the two vectors
+	double discrete_frechet_distance(Vector *p);		// Returns the discrete frechet distance between the two vectors
+	unsigned size();
+
 	void copy_Vec(Vector *p);	// Copies the values of the given Vector to the Centroid
 	void assign(Vector *p);		// Assign the given vector to this Centroid
 };
+
+// Define a Centroid member function type for the Distance functions in Centroids
+typedef double (Centroid::*CenDist)(Vector *);
 
 // Array Struct Used to store Centroids
 struct CentroidArray{
