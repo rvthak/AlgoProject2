@@ -31,7 +31,7 @@ void garbage_collector(MultiHash *lsh, Hypercube *cube, GridHash  *grid);
 
 int main(int argc, char *argv[]){
 	bool running = true;
-	unsigned mode=0, grid_amount;
+	unsigned mode=0, grid_amount, div_size;
 	print_header();
 
 	// A struct to store the program parameters
@@ -80,10 +80,10 @@ int main(int argc, char *argv[]){
 		}
 		else{ // Frechet
 			unsigned dim; // The projection dimention
-			if( args.metric == "discrete"){ dim=2; mode = 1; grid_amount=args.L; }
-			else { dim=1; mode = 2; grid_amount=1; }
+			if( args.metric == "discrete"){ dim=2; mode=1; grid_amount=args.L; div_size=DIVISION_SIZE_GRID_2D; }
+			else { dim=1; mode = 2; grid_amount=1; div_size=DIVISION_SIZE_GRID_1D; }
 
-			grid = new GridHash(args.delta, grid_amount, dim, args.k, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);
+			grid = new GridHash(args.delta, grid_amount, dim, args.k, getFileLines(args.input_file)/div_size, getFileLineLength(args.input_file)-1);
 			grid->loadVectors(&input_vecs);
 		}
 		print_structs_created(t.toc());
