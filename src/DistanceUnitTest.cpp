@@ -16,6 +16,8 @@ using namespace std;
 
 void DistanceUnitTest::test_discrete_distance_1_1()
 {
+    cout << "Test I : 1 point Q : 1 point" << endl;
+
     vector<double> input_v_1_1 { 34.5 };
     vector<double> query_v_1_1 { 83.4 };
 
@@ -32,10 +34,14 @@ void DistanceUnitTest::test_discrete_distance_1_1()
     double distance_fred_1_1 = Frechet::Discrete::distance(*this->input_curve_1_1, *this->query_curve_1_1).value;
 
     CPPUNIT_ASSERT(distance_chris_1_1 == distance_fred_1_1);
+
+    cout << "Test Passed!" << endl;
 }
 
 void DistanceUnitTest::test_discrete_distance_1_2()
 {
+    cout << "Test I : 1 point Q : 2 points" << endl;
+
     vector<double> input_v_1_2 { 78.9 };
     vector<double> query_v_1_2 { 11.6, 32.1 };
 
@@ -52,10 +58,14 @@ void DistanceUnitTest::test_discrete_distance_1_2()
     double distance_fred_1_2 = Frechet::Discrete::distance(*this->input_curve_1_2, *this->query_curve_1_2).value;
 
     CPPUNIT_ASSERT(distance_chris_1_2 == distance_fred_1_2);
+
+    cout << "Test Passed!" << endl;
 }  
 
 void DistanceUnitTest::test_discrete_distance_2_1()
 {
+    cout << "Test I : 2 points Q : 1 point" << endl;
+
     vector<double> input_v_2_1 { 58.3, 49.1 };
     vector<double> query_v_2_1 { 90.4 };
 
@@ -72,10 +82,13 @@ void DistanceUnitTest::test_discrete_distance_2_1()
     double distance_fred_2_1 = Frechet::Discrete::distance(*this->input_curve_2_1, *this->query_curve_2_1).value;
     
     CPPUNIT_ASSERT(distance_chris_2_1 == distance_fred_2_1);
+
+    cout << "Test Passed!" << endl;
 }
 
 void DistanceUnitTest::test_discrete_distance_m_n()
 {
+    cout << "Test I : m points Q : n points" << endl;
 
     vector<double> input_v_m_n { 56.3, 03.2, 78.2, 67.1, 31,4 };
     vector<double> query_v_m_n { 67.2, 18.4, 32.8, 59.2, 67.3, 90.2, 41.5 };
@@ -93,6 +106,8 @@ void DistanceUnitTest::test_discrete_distance_m_n()
     double distance_fred_m_n = Frechet::Discrete::distance(*this->input_curve_m_n, *this->query_curve_m_n).value;
 
     CPPUNIT_ASSERT(distance_chris_m_n == distance_fred_m_n);
+
+    cout << "Test Passed!" << endl;
 }
 
 CppUnit::Test* DistanceUnitTest::suite()
