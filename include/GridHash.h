@@ -6,6 +6,9 @@
 #include "hash_lsh.h"
 #include "shortedList.h"
 
+#define DIVISION_SIZE_GRID_1D 3
+#define DIVISION_SIZE_GRID_2D 4
+
 struct GridHash{
 	unsigned dim; // The projection dimention
 
@@ -27,6 +30,7 @@ struct GridHash{
 
 	ShortedList *disc_NN_lsh(Vector *query);	// Return the nearest neighbor of the given Vector using Discrete Frechet + 2D Curve representation
 	ShortedList *cont_NN_lsh(Vector *query);	// Return the nearest neighbor of the given Vector using Continuous Frechet + 1D Curve representation
+	List *range_search(Vector *query, double R, VecDist distfun);	// Range search in the Grid struct
 
 	void loadVectors(VectorArray *arr);			// Add all the Vectors from the given VectorArray
 	void loadVectors(AssignmentArray *arr);		// Add all the Vectors from the given AssignmentArray

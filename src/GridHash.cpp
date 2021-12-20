@@ -141,10 +141,6 @@ ShortedList *GridHash::disc_NN_lsh(Vector *query){
 		}
 	}
 
-	if( list->first == nullptr ){
-		cout << " (!) NO NEIGHBOR FOUND (!) " << endl;
-	}
-
 	return list;
 }
 
@@ -194,6 +190,44 @@ ShortedList *GridHash::cont_NN_lsh(Vector *query){
 			}
 		}
 	}
+	return list;
+}
+
+// Range search for the k approximate Nearest Neighbors of the given query Vector
+List *GridHash::range_search(Vector *query, double R, VecDist distfun){
+	unsigned long index;
+	unsigned long ID;
+	double dist;
+	Bucket *bucket;
+	List *list = new List();
+	Vector *key;
+
+	// For each existing Grid
+	for(unsigned i=0; i<(this->size()); i++){
+
+		// Get the key Vector of the query Vector
+		key = this->hash_2D(query, (this->grid_t)[i] );
+
+		// Get the ID of the key
+		ID = (((this->mult)[i]->array)[0])->g->ID(key);
+		delete key;
+		
+		// Find the correct bucket based on the hash key
+		index  = mod( ID , (((this->mult)[i]->array)[0])->g->tableSize );
+		bucket = &( ((((this->mult)[i]->array)[0])->bucs)[index]);
+
+		// Check the bucket and store only the nearest Vectors
+		Bucket_node *cur = bucket->first;
+		while( cur != nullptr ){
+			if( cur->ID == ID ){
+				if( (dist = (query->*distfun)(cur->data)) <= R ){
+					list->add( cur->data);
+				}
+			}
+			cur = cur->next;
+		}
+	}
+	
 	return list;
 }
 
