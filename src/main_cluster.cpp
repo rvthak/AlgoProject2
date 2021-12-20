@@ -21,9 +21,11 @@ Centroid *second_centroid(Vector *v, CentroidArray *cent, double *d, Centroid *a
 
 void Classic_assignment(AssignmentArray *ass_vecs, CentroidArray *cent, VecDist distfun);
 void Lsh_assignment(AssignmentArray *ass_vecs, MultiHash *lsh, CentroidArray *cent, VecDist distfun);
+void Grid_assignment(AssignmentArray *ass_vecs, GridHash *grid, CentroidArray *cent, VecDist distfun);
 void Cube_assignment(AssignmentArray *ass_vecs, Hypercube *cube, CentroidArray *cent);
 
 void reverse_range_lsh_assignment(AssignmentArray *ass_vecs, CentroidArray *cent, unsigned index, MultiHash *lsh, VecDist distfun);
+void reverse_range_grid_assignment(AssignmentArray *ass_vecs, CentroidArray *cent, unsigned index, GridHash *grid, VecDist distfun);
 void reverse_range_cube_assignment(AssignmentArray *ass_vecs, CentroidArray *cent, unsigned index, Hypercube *cube);
 unsigned assign_list(AssignmentArray *ass_vecs, CentroidArray *cent, unsigned index, List *list);
 
@@ -68,7 +70,7 @@ int main(int argc, char *argv[]){
 	MultiHash *lsh; Hypercube *cube; GridHash *grid;
 	if( args.update == "Vector" && args.assignment == "LSH" ){
 		// Create the LSH Structs
-		lsh = new MultiHash(args.k_lsh, args.L, ass_vecs.size, (ass_vecs.array)[0].vec.size());
+		lsh = new MultiHash(args.k_lsh, args.L, ass_vecs.size/DIVISION_SIZE, (ass_vecs.array)[0].vec.size());
 
 		// Load the input data into the structs
 		lsh->loadVectors(&ass_vecs);
@@ -83,7 +85,7 @@ int main(int argc, char *argv[]){
 	}
 	else if( args.update == "Frechet" && args.assignment == "LSH" ){
 		// Create the Grid Structs
-		grid = new GridHash(DELTA, GRID_AMOUNT, 2, args.k_lsh, getFileLines(args.input_file)/DIVISION_SIZE, getFileLineLength(args.input_file)-1);
+		grid = new GridHash(DELTA, GRID_AMOUNT, 2, args.k_lsh, ass_vecs.size/DIVISION_SIZE, (ass_vecs.array)[0].vec.size());
 		
 		// Load the input data into the structs
 		grid->loadVectors(&ass_vecs);
@@ -115,7 +117,7 @@ int main(int argc, char *argv[]){
 			Lsh_assignment(&ass_vecs, lsh, &cent, &Vector::l2);
 		}else if( args.update == "Frechet" && args.assignment == "LSH" ) {
 			algorithm = "ALSHUFrechet";
-			Lsh_assignment(&ass_vecs, lsh, &cent, &Vector::discrete_frechet_distance);
+			Grid_assignment(&ass_vecs, grid, &cent, &Vector::discrete_frechet_distance);
 		}
 
 		else if( args.update == "Vector" && args.assignment == "Hypercube" ){
@@ -192,6 +194,26 @@ void Lsh_assignment(AssignmentArray *ass_vecs, MultiHash *lsh, CentroidArray *ce
 	}
 }
 
+void Grid_assignment(AssignmentArray *ass_vecs, GridHash *grid, CentroidArray *cent, VecDist distfun){
+	double dist;
+	Centroid *c;
+
+	// For each Centroid
+	for(unsigned i=0; i<(cent->size); i++){
+		// Get assigned the nearest Vectors using Reverse Range Search based on the grid struct
+		reverse_range_grid_assignment(ass_vecs, cent, i, grid, distfun);
+	}
+
+	// Assign any Vectors left unassigned using the exact method
+	for(unsigned i=0; i<(ass_vecs->size); i++){
+		if( (ass_vecs->array)[i].centroid == nullptr ){
+			c = exact_centroid( &((ass_vecs->array)[i]), cent , &dist, distfun );
+			c->assign( &((ass_vecs->array)[i]) );
+			ass_vecs->assign( (ass_vecs->array)[i].id, c, dist );
+		}
+	}
+}
+
 // Assignment using Hypercube => Approximate Distance
 void Cube_assignment(AssignmentArray *ass_vecs, Hypercube *cube, CentroidArray *cent){
 	double dist;
@@ -200,7 +222,7 @@ void Cube_assignment(AssignmentArray *ass_vecs, Hypercube *cube, CentroidArray *
 
 	// For each Centroid
 	for(unsigned i=0; i<(cent->size); i++){
-		// Get assigned the nearest Vectors using Reverse Range Search based on the lsh struct
+		// Get assigned the nearest Vectors using Reverse Range Search based on the cube struct
 		reverse_range_cube_assignment(ass_vecs, cent, i, cube );
 	}
 
@@ -225,6 +247,25 @@ void reverse_range_lsh_assignment(AssignmentArray *ass_vecs, CentroidArray *cent
 	while(assigned){
 		// Search within a range for Vectors to assign to the cluster
 		list = lsh->range_search( &((cent->array)[index].vec), R, distfun);
+
+		// Assign the found Vectors to this Centroid
+		assigned = assign_list(ass_vecs, cent, index, list);
+
+		// Double the search range and search again
+		R*=2;
+		delete list;
+	}
+}
+
+// Reverse Range Search using grid
+void reverse_range_grid_assignment(AssignmentArray *ass_vecs, CentroidArray *cent, unsigned index, GridHash *grid, VecDist distfun){
+	double R = INITIAL_R;
+	unsigned assigned=1;
+	List *list;
+
+	while(assigned){
+		// Search within a range for Vectors to assign to the cluster
+		list = grid->range_search( &((cent->array)[index].vec), R, distfun);
 
 		// Assign the found Vectors to this Centroid
 		assigned = assign_list(ass_vecs, cent, index, list);
